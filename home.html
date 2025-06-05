@@ -1,1 +1,1703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil vervollständigen</title>
+    <!-- Load Tailwind CSS for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Using Google Fonts for 'Montserrat' as requested -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom styles to override or extend Tailwind, and for specific elements */
+        body {
+            font-family: 'Montserrat', sans-serif; /* Changed font to Montserrat */
+            background-color: #f3f4f6; /* Light gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align to top for better content flow */
+            min-height: 100vh;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        /* Main container for onboarding and preview */
+        .main-content-wrapper {
+            display: flex;
+            gap: 2rem; /* Space between onboarding and preview */
+            width: 100%;
+            max-width: 85rem; /* Increased max-width for side-by-side layout */
+            justify-content: center; /* Center content horizontally */
+            position: relative; /* Needed for confetti positioning */
+            overflow: hidden; /* Hide overflowing confetti */
+        }
+
+        .onboarding-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem; /* More rounded corners */
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 40rem; /* Max width for readability */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .profile-preview-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 25rem; /* Max width for the preview */
+            flex-shrink: 0;
+            position: sticky; /* Make it sticky */
+            top: 2rem; /* Stick to the top with some offset */
+            align-self: flex-start; /* Align to the start of the cross-axis */
+            background-color: #e5e7eb; /* Darker background for the entire column */
+            border-radius: 1.5rem; /* Match onboarding container border-radius */
+            padding: 2rem; /* Add padding to the wrapper itself */
+        }
+
+        .profile-preview-wrapper h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-preview-wrapper p.description {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+
+        .profile-preview-container {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            width: 100%;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            box-sizing: border-box;
+            display: flex; /* Use flexbox for internal layout */
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 2rem; /* Added padding back to the inner container */
+        }
+
+        h1 {
+            font-size: 2.25rem; /* text-4xl */
+            font-weight: 700; /* font-bold */
+            color: #1f2937; /* Gray-900 */
+            margin-bottom: 0.75rem;
+        }
+
+        .onboarding-container > p {
+            font-size: 1rem; /* text-base */
+            color: #6b7280; /* Gray-500 */
+            margin-bottom: 2.5rem;
+        }
+
+        .profile-summary {
+            display: flex;
+            align-items: center;
+            background-color: #eff6ff; /* Light blue-50, similar to original design */
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .avatar {
+            width: 3.5rem; /* h-14 */
+            height: 3.5rem; /* w-14 */
+            background-color: #4f46e5; /* Indigo-600 */
+            color: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            margin-right: 1rem;
+            flex-shrink: 0; /* Prevent shrinking */
+            overflow: hidden; /* Ensure image stays within circle */
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* Cover the area without distortion */
+        }
+
+        .profile-info {
+            flex-grow: 1;
+            margin-right: 1rem;
+        }
+
+        .user-name {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #1f2937;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            background-color: #e5e7eb; /* Gray-200 */
+            border-radius: 0.5rem;
+            height: 0.75rem; /* h-3 */
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background-color: #4f46e5; /* Indigo-600 */
+            border-radius: 0.5rem;
+            transition: width 0.5s ease-in-out;
+        }
+
+        .completion-percentage {
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #4b5563; /* Gray-600 */
+            flex-shrink: 0;
+            min-width: 6rem; /* Ensure enough space */
+            text-align: right;
+        }
+
+        .onboarding-steps .step {
+            display: flex;
+            justify-content: space-between; /* Pushes content to ends */
+            align-items: center;
+            padding: 1.25rem 0;
+            border-bottom: 1px solid #e5e7eb; /* Gray-200 */
+        }
+
+        .onboarding-steps .step:last-child {
+            border-bottom: none;
+        }
+
+        /* New class for grouping icon and content */
+        .step-details-group {
+            display: flex;
+            align-items: center;
+            width: 80%; /* Set width to 80% for larger screens */
+            flex-shrink: 0; /* Prevent shrinking below 80% */
+        }
+
+        .step-icon {
+            width: 2.5rem; /* h-10 */
+            height: 2.5rem; /* w-10 */
+            border-radius: 50%;
+            background-color: #eff6ff; /* Blue-50 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-icon svg {
+            width: 1.25rem; /* h-5 */
+            height: 1.25rem; /* w-5 */
+            color: #4f46e5; /* Indigo-600 */
+        }
+
+        .step-icon .checkmark-icon {
+            color: #10b981; /* Green-500 */
+        }
+
+        .step-content {
+            /* No flex-grow here, as it's handled by step-details-group's width */
+        }
+
+        .step-content h3 {
+            font-size: 1.125rem; /* text-lg */
+            font-weight: 600; /* font-semibold */
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .step-content p {
+            font-size: 0.875rem; /* text-sm */
+            color: #6b7280;
+        }
+
+        .add-button {
+            border: 1px solid #581c87; /* Purple border */
+            color: #581c87; /* Purple text */
+            background-color: transparent; /* Transparent background */
+            border-radius: 0.5rem; /* rounded-lg */
+            width: 2.5rem; /* w-10 */
+            height: 2.5rem; /* h-10 */
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 500; /* font-medium */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .add-button:hover {
+            background-color: #ede9fe; /* Light purple on hover */
+            transform: translateY(-1px);
+        }
+
+        .add-button:active {
+            background-color: #ddd6fe; /* Darker purple on active */
+            transform: translateY(0);
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+
+        .modal-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            border-radius: 1rem;
+            padding: 2rem;
+            width: 90%;
+            max-width: 30rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            transform: translateY(20px);
+            transition: transform 0.3s ease-in-out;
+            box-sizing: border-box;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 600; /* font-semibold */
+            color: #1f2937;
+        }
+
+        .modal-close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0.25rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .modal-close-button:hover {
+            background-color: #e5e7eb;
+        }
+
+        .modal-body p {
+            color: #4b5563;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form specific styles */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem; /* text-sm */
+            font-weight: 500; /* font-medium */
+            color: #374151; /* Gray-700 */
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea { /* Added textarea */
+            display: block;
+            width: 100%;
+            padding: 0.625rem 0.75rem; /* py-2.5 px-3 */
+            border: 1px solid #d1d5db; /* Gray-300 */
+            border-radius: 0.375rem; /* rounded-md */
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            font-size: 0.875rem; /* text-sm */
+            color: #1f2937;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { /* Added textarea */
+            outline: none;
+            border-color: #4f46e5; /* Indigo-500 */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); /* Indigo-500 with opacity */
+        }
+
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+            margin-bottom: 0; /* Reset margin as gap handles spacing */
+        }
+
+        /* Profile picture specific styles */
+        .upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 10rem;
+            height: 10rem;
+            border: 2px dashed #d1d5db;
+            border-radius: 50%;
+            margin: 2rem auto;
+            cursor: pointer;
+            transition: border-color 0.2s ease-in-out;
+            position: relative; /* For positioning the image */
+            overflow: hidden; /* Clip image to circle */
+        }
+
+        .upload-area:hover {
+            border-color: #4f46e5;
+        }
+
+        .upload-area svg {
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #4f46e5;
+            position: absolute; /* Position over image */
+            pointer-events: none; /* Allow clicks to pass through to input */
+        }
+
+        .upload-area img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%; /* Ensure image itself is circular */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .upload-area input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10; /* Make it clickable over other elements */
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            /* Removed gap as there's only one button */
+        }
+
+        .modal-button {
+            padding: 0.625rem 1.25rem; /* py-2.5 px-5 */
+            border-radius: 0.625rem; /* rounded-lg */
+            font-weight: 500; /* font-medium */
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .modal-button.save {
+            background-color: #ef4444; /* Red-500 from design */
+            color: #ffffff;
+            border: 1px solid #ef4444;
+        }
+
+        .modal-button.save:hover {
+            background-color: #dc2626; /* Red-600 */
+            border-color: #dc2626;
+        }
+
+        /* Specific style for the "Fertig" button in the profile picture modal */
+        .modal-button.done-purple {
+            background-color: transparent;
+            color: #581c87; /* Purple color */
+            border: 1px solid #581c87;
+        }
+
+        .modal-button.done-purple:hover {
+            background-color: #ede9fe; /* Light purple on hover */
+            border-color: #581c87;
+        }
+
+
+        .hidden {
+            display: none;
+        }
+
+        /* Custom message box for alerts */
+        #custom-message-box {
+            position: fixed;
+            top: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fef2f2; /* Red-50 */
+            color: #b91c1c; /* Red-700 */
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        #custom-message-box.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Inline error message style */
+        .inline-error-message {
+            color: #b91c1c; /* Red-700 */
+            font-size: 0.75rem; /* text-xs */
+            margin-top: 0.25rem;
+            display: block;
+        }
+
+        /* Profile Preview Specific Styles */
+        .preview-avatar {
+            width: 6rem; /* Larger avatar for preview */
+            height: 6rem;
+            background-color: #d1d5db; /* Light gray for skeleton */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            color: transparent; /* Hide text when it's a skeleton */
+        }
+
+        .preview-avatar.has-image {
+            background-color: transparent; /* No background when image is present */
+        }
+
+        .preview-name {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+            height: 1.5rem; /* Approximate height of text */
+            width: 80%; /* Approximate width of name */
+            border-radius: 0.25rem;
+            background-color: #d1d5db; /* Light gray for skeleton */
+            animation: pulse 1.5s infinite ease-in-out; /* Apply animation directly */
+        }
+
+        .preview-name.has-content {
+            background-color: transparent;
+            height: auto;
+            width: auto;
+            animation: none; /* Stop the animation */
+        }
+
+        .preview-status {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            display: flex; /* Use flex to align dot and text */
+            align-items: center;
+            justify-content: center; /* Center content */
+        }
+
+        .preview-status .skeleton-line {
+            height: 1rem;
+            width: 50%;
+        }
+
+        .preview-status.has-content .skeleton-line {
+            display: none; /* Hide skeleton when content is present */
+        }
+
+
+        .status-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #10b981; /* Green dot */
+            border-radius: 50%;
+            margin-right: 0.3rem;
+            flex-shrink: 0;
+        }
+
+        .preview-detail-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            color: #4b5563;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .preview-detail-row svg {
+            width: 1rem;
+            height: 1rem;
+            margin-right: 0.5rem;
+            color: #10b981; /* Green for verified, or a neutral color */
+        }
+
+        .preview-location-text, .preview-phone-text {
+            /* background-color: #d1d5db; /* Skeleton background */
+            height: 1rem;
+            width: 100%; /* Adjust as needed */
+            border-radius: 0.25rem; */
+        }
+
+        .preview-location-text.has-content, .preview-phone-text.has-content {
+            background-color: transparent;
+            height: auto;
+            width: auto;
+        }
+
+
+        .preview-about-you {
+            background-color: #f9fafb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            text-align: left;
+            width: 100%;
+        }
+
+        .preview-about-you-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-about-you-title .skeleton-line {
+            height: 1rem;
+            width: 70%;
+        }
+
+        .preview-about-you-title.has-content .skeleton-line {
+            display: none;
+        }
+
+        .preview-about-you-text {
+            font-size: 0.875rem;
+            color: #4b5563;
+            line-height: 1.5;
+            flex-grow: 1; /* Allow text to grow */
+        }
+
+        .preview-about-you-text .skeleton-line {
+            height: 3rem; /* Height for multiple lines */
+            width: 100%;
+        }
+
+        .preview-about-you-text.has-content .skeleton-line {
+            display: none;
+        }
+
+        /* Skeleton styles */
+        .skeleton-line {
+            background-color: #d1d5db; /* Light gray for skeleton */
+            height: 1em; /* Adjust based on font-size of target */
+            border-radius: 0.25rem;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .skeleton-circle {
+            background-color: #d1d5db; /* Light gray for skeleton */
+            border-radius: 50%;
+            width: 100%;
+            height: 100%;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Confetti styles */
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 999; /* Below modals, above content */
+        }
+
+        .confetti {
+            position: absolute;
+            width: 0.5rem;
+            height: 0.5rem;
+            background-color: #f0f; /* Default color, will be randomized */
+            opacity: 0;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) { /* Adjust breakpoint for side-by-side */
+            .main-content-wrapper {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .onboarding-container {
+                max-width: 100%;
+            }
+
+            .profile-preview-wrapper {
+                max-width: 100%;
+                margin-top: 2rem; /* Add space when stacked */
+                position: static; /* Remove sticky positioning when stacked */
+                padding: 1.5rem; /* Adjust padding for smaller screens */
+            }
+
+            .profile-preview-container {
+                padding: 1.5rem; /* Adjust padding for smaller screens */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .onboarding-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+
+            h1 {
+                font-size: 1.75rem; /* text-3xl */
+            }
+
+            .profile-summary {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1rem;
+            }
+
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 0.75rem;
+            }
+
+            .profile-info {
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .completion-percentage {
+                width: 100%;
+                text-align: left;
+                margin-top: 0.75rem;
+            }
+
+            .onboarding-steps .step {
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .step-details-group {
+                width: auto; /* Allow it to take flexible width on mobile */
+                flex-grow: 1; /* Allow it to grow on mobile */
+                margin-bottom: 0.5rem; /* Add some space below on wrap */
+            }
+
+            .step-icon {
+                margin-right: 0.75rem;
+            }
+
+            .step-content {
+                flex-basis: calc(100% - 4rem); /* Adjust for icon and window.getComputedStyle(element).fontSize; */
+                /* margin-bottom: 0.5rem; Moved to step-details-group */
+            }
+
+            .add-button {
+                margin-left: auto; /* Push button to the right */
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+
+            .form-row {
+                flex-direction: column; /* Stack inputs vertically on small screens */
+                gap: 0; /* Remove gap when stacked */
+            }
+
+            .form-row .form-group {
+                margin-bottom: 1rem; /* Add back margin for stacked items */
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-content-wrapper">
+        <div class="onboarding-container">
+            <h1 class="text-3xl font-bold mb-2">Profil vervollständigen</h1>
+            <p>Profile mit vollständigen Angaben werden bevorzugt und erhalten schnellere Antworten auf ihre Anfragen und Anzeigen.</p>
+
+            <div class="profile-summary">
+                <div class="avatar" id="profile-avatar">DN</div>
+                <div class="profile-info">
+                    <span class="user-name" id="user-name">Dein Name</span>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="profile-progress-bar" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <span class="completion-percentage" id="completion-percentage">0% abgeschlossen</span>
+            </div>
+
+            <div class="onboarding-steps">
+                <!-- Step: Name -->
+                <div class="step" id="step-name" data-completed="false">
+                    <div class="step-details-group">
+                        <div class="step-icon">
+                            <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                            </svg>
+                            <svg class="checkmark-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="step-content">
+                            <h3>Name</h3>
+                            <p>Ein echter Name verleiht Ihren Nachrichten und Anfragen Glaubwürdigkeit.</p>
+                        </div>
+                    </div>
+                    <button class="add-button" data-step="name">+</button>
+                </div>
+
+                <!-- Step: Address -->
+                <div class="step" id="step-address" data-completed="false">
+                    <div class="step-details-group">
+                        <div class="step-icon">
+                            <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+                            <svg class="checkmark-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="step-content">
+                            <h3>Adresse</h3>
+                            <p>Wir zeigen nur Ihre Postleitzahl in Ihrem Profil an.</p>
+                        </div>
+                    </div>
+                    <button class="add-button" data-step="address">+</button>
+                </div>
+
+                <!-- Step: Phone number -->
+                <div class="step" id="step-phone-number" data-completed="false">
+                    <div class="step-details-group">
+                        <div class="step-icon">
+                            <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3" />
+                            </svg>
+                            <svg class="checkmark-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="step-content">
+                            <h3>Telefonnummer</h3>
+                            <p>Wir informieren Personen, mit denen Sie interagieren, ob Ihre Telefonnummer verifiziert ist.</p>
+                        </div>
+                    </div>
+                    <button class="add-button" data-step="phone-number">+</button>
+                </div>
+
+                <div class="step" id="step-about-you" data-completed="false">
+                    <div class="step-details-group">
+                        <div class="step-icon">
+                            <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0  0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+                            </svg>
+                            <svg class="checkmark-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="step-content">
+                            <h3>Über dich</h3>
+                            <p>Beantworte eine Frage über dich, um deinem Profil ein 100%iges Vertrauenssiegel zu verleihen.</p>
+                        </div>
+                    </div>
+                    <button class="add-button" data-step="about-you">+</button>
+                </div>
+
+                <div class="step" id="step-profile-picture" data-completed="false">
+                    <div class="step-details-group">
+                        <div class="step-icon">
+                           <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                            <svg class="checkmark-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                                <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
+                            </svg>
+                        </div>
+                        <div class="step-content">
+                            <h3>Profilbild</h3>
+                            <p>Ein Profilbild zeigt, dass Sie echt sind und kein Spam.</p>
+                        </div>
+                    </div>
+                    <button class="add-button" data-step="profile-picture">+</button>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="profile-preview-wrapper">
+            <h2>Vorschau</h2>
+            <p class="description">So wird Ihr Profil bei jeder Autoanfrage angezeigt, die Sie senden.</p>
+            <div class="profile-preview-container">
+                <div class="preview-avatar" id="preview-avatar">
+                    <div class="skeleton-circle" id="preview-avatar-skeleton"></div>
+                </div>
+                <div class="preview-status" id="preview-status">
+                    <span class="status-dot"></span> <span id="preview-status-text">Online</span>
+                </div>
+                <div class="preview-name" id="preview-name"></div>
+
+                <div class="preview-detail-row hidden" id="preview-phone-verified">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+</svg>
+
+                    <span id="preview-phone-text">Telefonnummer verifiziert</span>
+                </div>
+
+                <div class="preview-detail-row hidden" id="preview-location">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+</svg>
+
+                    <span id="preview-zip-city"></span>
+                </div>
+
+                <div class="preview-about-you hidden" id="preview-about-you">
+                    <div class="preview-about-you-title">
+                        <span id="preview-about-you-prompt"></span>
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+  <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0  0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
+</svg>
+                    </div>
+                    <p class="preview-about-you-text" id="preview-about-you-answer"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-message-box" class="hidden"></div>
+
+    <div id="confetti-container" class="confetti-container hidden"></div>
+
+    <div id="form-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title"></h2>
+                <button class="modal-close-button" id="modal-close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                </div>
+            <div class="modal-actions">
+                <button class="modal-button save" id="modal-save-button">Save</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+    <script>
+        // State to keep track of completed steps
+        const completedSteps = {
+            'name': false,
+            'address': false,
+            'phone-number': false,
+            'about-you': false, // Reordered
+            'profile-picture': false // Reordered
+        };
+
+        // DOM elements (declared globally but assigned in DOMContentLoaded)
+        let profileAvatar;
+        let userName;
+        let progressBar;
+        let completionPercentage;
+        let addButtons;
+        let modalOverlay;
+        let modalTitle;
+        let modalBody;
+        let modalCloseButton;
+        let modalSaveButton;
+        let customMessageBox;
+        let confettiContainer;
+
+        // Preview elements
+        let previewAvatar;
+        let previewAvatarSkeleton;
+        let previewName;
+        let previewStatus;
+        let previewStatusText;
+        let previewPhoneVerified;
+        let previewPhoneText;
+        let previewLocation;
+        let previewZipCity;
+        let previewAboutYou;
+        let previewAboutYouPrompt;
+        let previewAboutYouAnswer;
+
+
+        // Function to display custom messages (global, for non-inline errors)
+        function showMessage(message, type = 'error', duration = 3000) {
+            customMessageBox.textContent = message;
+            customMessageBox.className = ''; // Clear existing classes
+            customMessageBox.classList.add('show');
+
+            if (type === 'error') {
+                customMessageBox.style.backgroundColor = '#fef2f2'; /* Red-50 */
+                customMessageBox.style.color = '#b91c1c'; /* Red-700 */
+            } else {
+                // Default styles for success or info
+                customMessageBox.style.backgroundColor = '#ecfdf5'; /* Green-50 */
+                customMessageBox.style.color = '#065f46'; /* Green-700 */
+            }
+
+            setTimeout(() => {
+                customMessageBox.classList.remove('show');
+            }, duration);
+        }
+
+        // Function to display inline error messages
+        function showInlineError(fieldId, message) {
+            let errorElement = document.getElementById(`${fieldId}Error`);
+            if (!errorElement) {
+                errorElement = document.createElement('div');
+                errorElement.id = `${fieldId}Error`;
+                errorElement.classList.add('inline-error-message');
+                const fieldInput = document.getElementById(fieldId);
+                if (fieldInput) {
+                    fieldInput.parentNode.insertBefore(errorElement, fieldInput.nextSibling);
+                }
+            }
+            errorElement.textContent = message;
+            errorElement.classList.remove('hidden');
+        }
+
+        // Function to clear inline error messages
+        function clearInlineError(fieldId) {
+            const errorElement = document.getElementById(`${fieldId}Error`);
+            if (errorElement) {
+                errorElement.textContent = '';
+                errorElement.classList.add('hidden');
+            }
+        }
+
+        // Function to trigger confetti animation
+        function triggerConfetti() {
+            confettiContainer.classList.remove('hidden');
+            const colors = ['#f0f', '#0ff', '#ff0', '#f00', '#0f0', '#00f']; // Confetti colors
+
+            for (let i = 0; i < 100; i++) { // Generate 100 confetti particles
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                confetti.style.left = `${Math.random() * 100}%`;
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.animationDelay = `${Math.random() * 2}s`; // Random delay for staggered effect
+                confettiContainer.appendChild(confetti);
+            }
+
+            setTimeout(() => {
+                // Remove confetti after animation
+                confettiContainer.innerHTML = '';
+                confettiContainer.classList.add('hidden');
+            }, 3000); // Match animation duration
+        }
+
+
+        // Function to update progress bar and percentage
+        function updateProgressBar() {
+            const totalSteps = Object.keys(completedSteps).length;
+            const completedCount = Object.values(completedSteps).filter(status => status).length;
+            const percentage = (completedCount / totalSteps) * 100;
+
+            progressBar.style.width = `${percentage}%`;
+            completionPercentage.textContent = `${percentage}% abgeschlossen`; // Translated
+
+            // Update avatar text if name is completed
+            if (completedSteps['name'] && userName) {
+                if (userName.textContent === 'Dein Name') { // Translated
+                    profileAvatar.textContent = 'MM'; // Example initials
+                    userName.textContent = 'Max Mustermann'; // Example name
+                }
+            } else if (!completedSteps['name'] && userName && userName.textContent === 'Max Mustermann') {
+                // Revert if name is uncompleted (e.g., for testing reset)
+                profileAvatar.textContent = 'YN';
+                userName.textContent = 'Dein Name'; // Translated
+            }
+
+            // Trigger confetti if all steps are completed
+            if (percentage === 100) {
+                triggerConfetti();
+            }
+        }
+
+        // Function to toggle step completion visual
+        function toggleStepCompletion(stepId, isCompleted) {
+            const stepElement = document.getElementById(`step-${stepId}`);
+            if (stepElement) {
+                const editIcon = stepElement.querySelector('.edit-icon');
+                const checkmarkIcon = stepElement.querySelector('.checkmark-icon'); // This is not used for the left icon anymore
+                const addButton = stepElement.querySelector('.add-button');
+                const stepParagraph = stepElement.querySelector('.step-content p');
+
+                if (isCompleted) {
+                    // The left icon (edit-icon) always stays visible as per new request
+                    // The checkmark-icon in the step-icon div remains hidden.
+
+                    // Update descriptive text based on completion
+                    if (stepId === 'name') stepParagraph.textContent = 'Anfragen mit Namen erhalten mehr Antworten und schaffen Vertrauen'; // Translated
+                    if (stepId === 'profile-picture') stepParagraph.textContent = 'Zeigen Sie, dass Sie echt sind und kein Spam, indem Sie ein Profilbild hinzufügen'; // Translated
+
+                    // Change the add button to a checkmark
+                    addButton.textContent = '✓'; // Change button to checkmark
+                    addButton.style.backgroundColor = '#dcfce7'; /* Green-100 */
+                    addButton.style.color = '#10b981'; /* Green-500 */
+                    addButton.style.cursor = 'default';
+                    addButton.disabled = true; // Disable button after completion
+                    addButton.style.border = '1px solid #10b981'; // Green border for completed
+                } else {
+                    // Revert to initial state
+                    // The left icon (edit-icon) always stays visible
+                    // The checkmark-icon in the step-icon div remains hidden.
+
+                    // Revert descriptive text
+                    if (stepId === 'name') stepParagraph.textContent = 'Ein echter Name verleiht Ihren Nachrichten und Anfragen Glaubwürdigkeit.'; // Translated
+                    if (stepId === 'profile-picture') stepParagraph.textContent = 'Ein Profilbild zeigt, dass Sie echt sind und kein Spam.'; // Translated
+                    addButton.textContent = '+';
+                    addButton.style.backgroundColor = 'transparent';
+                    addButton.style.color = '#581c87';
+                    addButton.style.cursor = 'pointer';
+                    addButton.disabled = false;
+                    addButton.style.border = '1px solid #581c87'; // Revert border
+                }
+                stepElement.dataset.completed = isCompleted; // Update data attribute
+            }
+        }
+
+        // Function to open the modal
+        function openModal(stepName) {
+            // Translate modal title
+            let translatedTitle = '';
+            switch (stepName) {
+                case 'name':
+                    translatedTitle = 'Name hinzufügen';
+                    break;
+                case 'address':
+                    translatedTitle = 'Adresse hinzufügen';
+                    break;
+                case 'phone-number':
+                    translatedTitle = 'Telefonnummer hinzufügen';
+                    break;
+                case 'about-you':
+                    translatedTitle = 'Über dich hinzufügen';
+                    break;
+                case 'profile-picture':
+                    translatedTitle = 'Profilbild'; // As per the design
+                    break;
+                default:
+                    translatedTitle = `Add ${stepName.replace('-', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}`;
+            }
+            modalTitle.textContent = translatedTitle;
+            modalOverlay.dataset.currentStep = stepName; // Store current step
+
+            // Clear previous modal content
+            modalBody.innerHTML = '';
+            // Clear existing buttons in modal-actions
+            const modalActions = modalOverlay.querySelector('.modal-actions');
+            modalActions.innerHTML = '';
+
+            // Create and append the save button
+            const saveButton = document.createElement('button');
+            saveButton.className = 'modal-button save';
+            saveButton.id = 'modal-save-button'; // Assign ID for re-referencing
+            modalActions.appendChild(saveButton);
+            // Update the global modalSaveButton reference
+            modalSaveButton = document.getElementById('modal-save-button');
+            modalSaveButton.removeEventListener('click', handleModalSave); // Remove old listener
+            modalSaveButton.addEventListener('click', handleModalSave); // Add new listener
+
+
+            if (stepName === 'name') {
+                modalBody.innerHTML = `
+                    <p class="text-gray-600 mb-4">Ein echter Name verleiht Ihren Nachrichten und Anfragen Glaubwürdigkeit.</p>
+                    <div class="form-group">
+                        <label for="salutation">Anrede</label>
+                        <select id="salutation" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="Herr">Herr</option>
+                            <option value="Frau">Frau</option>
+                            <option value="Divers">Divers</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">Vorname</label>
+                        <input type="text" id="firstName" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Vornamen eingeben">
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Nachname</label>
+                        <input type="text" id="lastName" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Nachnamen eingeben">
+                    </div>
+                `;
+                saveButton.textContent = 'Speichern';
+                saveButton.style.backgroundColor = '#ef4444';
+                saveButton.style.borderColor = '#ef4444';
+
+            } else if (stepName === 'address') {
+                modalBody.innerHTML = `
+                    <p class="text-gray-600 mb-4">Wir zeigen nur Ihre Postleitzahl in Ihrem Profil an.</p>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="street">Straße</label>
+                            <input type="text" id="street" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                        </div>
+                        <div class="form-group" style="flex: 0.3;">
+                            <label for="nr">Nr.</label>
+                            <input type="text" id="nr" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="zipCode">Postleitzahl</label>
+                            <input type="text" id="zipCode" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                        </div>
+                        <div class="form-group">
+                            <label for="city">Ort</label>
+                            <input type="text" id="city" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Land</label>
+                        <select id="country" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="Deutschland">Deutschland</option>
+                            <option value="United States">United States</option>
+                            <option value="Canada">Canada</option>
+                            <option value="United Kingdom">United Kingdom</option>
+                            </select>
+                    </div>
+                `;
+                saveButton.textContent = 'Speichern';
+                saveButton.style.backgroundColor = '#ef4444';
+                saveButton.style.borderColor = '#ef4444';
+
+            } else if (stepName === 'phone-number') {
+                modalBody.innerHTML = `
+                    <p class="text-gray-600 mb-4">Wir informieren Personen, mit denen Sie interagieren, ob Ihre Telefonnummer verifiziert ist.</p>
+                    <div class="form-group">
+                        <label for="phoneNumber">Telefonnummer</label>
+                        <input type="tel" id="phoneNumber" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                        <div id="phoneNumberError" class="inline-error-message hidden"></div>
+                    </div>
+                `;
+                saveButton.textContent = 'Speichern';
+                saveButton.style.backgroundColor = '#ef4444';
+                saveButton.style.borderColor = '#ef4444';
+            } else if (stepName === 'about-you') {
+                 modalBody.innerHTML = `
+                    <p class="text-gray-600 mb-4">Beantworte nur eine dieser Fragen, um deinem Profil ein Vertrauenssiegel zu verleihen.</p>
+                    <div class="form-group">
+                        <label for="prompt1">Meine ideale Probefahrt ist...</label>
+                        <textarea id="prompt1" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="prompt2">Ich suche ein Auto, das mir das Gefühl gibt...</label>
+                        <textarea id="prompt2" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="prompt3">Ich wusste, es war Zeit für ein neues Auto, als...</label>
+                        <textarea id="prompt3" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="prompt4">Ich schätze Verkäufer, die...</label>
+                        <textarea id="prompt4" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
+                    </div>
+                `;
+                saveButton.textContent = 'Speichern';
+                saveButton.style.backgroundColor = '#ef4444';
+                saveButton.style.borderColor = '#ef4444';
+
+                // Add event listeners for "About you" textareas
+                const aboutYouTextareas = modalBody.querySelectorAll('.about-you-textarea');
+                aboutYouTextareas.forEach(textarea => {
+                    textarea.addEventListener('input', (event) => {
+                        const currentTextarea = event.target;
+                        if (currentTextarea.value.trim() !== '') {
+                            // If this textarea has content, disable others
+                            aboutYouTextareas.forEach(otherTextarea => {
+                                if (otherTextarea !== currentTextarea) {
+                                    otherTextarea.disabled = true;
+                                    otherTextarea.style.backgroundColor = '#f3f4f6'; /* Visually indicate disabled */
+                                }
+                            });
+                        } else {
+                            // If this textarea is cleared, enable all
+                            aboutYouTextareas.forEach(otherTextarea => {
+                                otherTextarea.disabled = false;
+                                otherTextarea.style.backgroundColor = ''; /* Remove disabled visual */
+                            });
+                        }
+                    });
+                });
+
+            } else if (stepName === 'profile-picture') {
+                modalBody.innerHTML = `
+                    <p class="text-gray-600 mb-4">Ein Profilbild zeigt, dass Sie echt sind und kein Spam.</p>
+                    <div class="upload-area" id="profile-picture-upload-area">
+                        <input type="file" id="profilePictureInput" accept="image/*">
+                        <img id="profilePicturePreview" src="" alt="Profilbild Vorschau" class="hidden">
+                        <svg id="uploadIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                `;
+                saveButton.textContent = 'Fertig';
+                saveButton.className = 'modal-button done-purple'; // Apply specific class for styling
+                saveButton.style.backgroundColor = ''; // Reset background
+                saveButton.style.borderColor = ''; // Reset border
+
+                // Add event listener for file input change
+                const profilePictureInput = document.getElementById('profilePictureInput');
+                const profilePicturePreview = document.getElementById('profilePicturePreview');
+                const uploadIcon = document.getElementById('uploadIcon');
+
+                profilePictureInput.addEventListener('change', (event) => {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            profilePicturePreview.src = e.target.result;
+                            profilePicturePreview.classList.remove('hidden');
+                            uploadIcon.classList.add('hidden'); // Hide plus icon when image is present
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        profilePicturePreview.src = '';
+                        profilePicturePreview.classList.add('hidden');
+                        uploadIcon.classList.remove('hidden');
+                    }
+                });
+
+            }
+            else {
+                modalBody.innerHTML = `<p id="modal-message" class="text-gray-600">Dies ist ein Platzhalter für das ${translatedTitle.toLowerCase()}-Formular. Sie werden Ihre spezifischen Formulardesigns später hier hinzufügen.</p>`; // Translated
+                // Add a generic Save button for other modals
+                saveButton.textContent = 'Speichern'; // Translated
+                saveButton.style.backgroundColor = '#4f46e5';
+                saveButton.style.borderColor = '#4f46e5';
+            }
+
+            modalOverlay.classList.add('show');
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            modalOverlay.classList.remove('show');
+            modalOverlay.dataset.currentStep = ''; // Clear current step
+        }
+
+        // Handle Save button click
+        function handleModalSave() {
+            const currentStep = modalOverlay.dataset.currentStep;
+
+            // Clear all inline errors before validation
+            clearInlineError('firstName');
+            clearInlineError('lastName');
+            clearInlineError('street');
+            clearInlineError('nr');
+            clearInlineError('zipCode');
+            clearInlineError('city');
+            clearInlineError('country');
+            clearInlineError('phoneNumber');
+            clearInlineError('prompt1');
+            clearInlineError('prompt2');
+            clearInlineError('prompt3');
+            clearInlineError('prompt4');
+            clearInlineError('profilePictureInput');
+
+
+            if (currentStep === 'name') {
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                let isValid = true;
+
+                if (!firstName) {
+                    showInlineError('firstName', 'Bitte Vornamen eingeben.');
+                    isValid = false;
+                }
+                if (!lastName) {
+                    showInlineError('lastName', 'Bitte Nachnamen eingeben.');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    userName.textContent = `${firstName} ${lastName}`;
+                    profileAvatar.textContent = `${firstName.charAt(0)}${lastName.charAt(0)}`;
+
+                    // Update preview
+                    previewName.textContent = `${firstName} ${lastName}`;
+                    previewName.classList.add('has-content');
+                    previewName.classList.remove('skeleton-line');
+
+
+                    completedSteps['name'] = true;
+                    toggleStepCompletion('name', true);
+                    updateProgressBar();
+                    closeModal();
+                }
+            } else if (currentStep === 'address') {
+                const street = document.getElementById('street').value;
+                const nr = document.getElementById('nr').value;
+                const zipCode = document.getElementById('zipCode').value;
+                const city = document.getElementById('city').value;
+                const country = document.getElementById('country').value;
+                let isValid = true;
+
+                if (!street) {
+                    showInlineError('street', 'Bitte Straße eingeben.');
+                    isValid = false;
+                }
+                if (!nr) {
+                    showInlineError('nr', 'Bitte Hausnummer eingeben.');
+                    isValid = false;
+                }
+                if (!zipCode) {
+                    showInlineError('zipCode', 'Bitte Postleitzahl eingeben.');
+                    isValid = false;
+                }
+                if (!city) {
+                    showInlineError('city', 'Bitte Ort eingeben.');
+                    isValid = false;
+                }
+                if (!country) {
+                    showInlineError('country', 'Bitte Land auswählen.');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    previewLocation.classList.remove('hidden'); // Show location in preview
+                    previewZipCity.textContent = `${zipCode} ${city}`; // Update zip and city in preview
+                    previewZipCity.classList.add('has-content');
+                    previewZipCity.classList.remove('skeleton-line');
+                    completedSteps['address'] = true;
+                    toggleStepCompletion('address', true);
+                    updateProgressBar();
+                    closeModal();
+                }
+            } else if (currentStep === 'phone-number') {
+                const phoneNumber = document.getElementById('phoneNumber').value;
+                const digitsOnly = phoneNumber.replace(/\D/g, ''); // Remove non-digits
+                if (phoneNumber && digitsOnly.length >= 8) { // Changed from 5 to 8
+                    previewPhoneVerified.classList.remove('hidden'); // Show phone verified in preview
+                    previewPhoneText.textContent = 'Telefonnummer verifiziert'; // Set text content
+                    previewPhoneText.classList.add('has-content'); // Mark text as having content
+                    previewPhoneText.classList.remove('skeleton-line');
+                    completedSteps['phone-number'] = true;
+                    toggleStepCompletion('phone-number', true);
+                    updateProgressBar();
+                    closeModal();
+                } else {
+                    showInlineError('phoneNumber', 'Bitte geben Sie eine gültige Telefonnummer ein (mindestens 8 Ziffern).'); // Updated message
+                }
+            } else if (currentStep === 'about-you') {
+                const prompt1 = document.getElementById('prompt1').value;
+                const prompt2 = document.getElementById('prompt2').value;
+                const prompt3 = document.getElementById('prompt3').value;
+                const prompt4 = document.getElementById('prompt4').value;
+                let isValid = true;
+
+                let selectedPrompt = '';
+                let selectedAnswer = '';
+
+                if (prompt1) {
+                    selectedPrompt = 'Meine ideale Probefahrt ist...';
+                    selectedAnswer = prompt1;
+                } else if (prompt2) {
+                    selectedPrompt = 'Ich suche ein Auto, das mir das Gefühl gibt...';
+                    selectedAnswer = prompt2;
+                } else if (prompt3) {
+                    selectedPrompt = 'Ich wusste, es war Zeit für ein neues Auto, als...';
+                    selectedAnswer = prompt3;
+                } else if (prompt4) {
+                    selectedPrompt = 'Ich schätze Verkäufer, die...';
+                    selectedAnswer = prompt4;
+                } else {
+                    showInlineError('prompt1', 'Bitte füllen Sie mindestens eine Frage aus.');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    previewAboutYou.classList.remove('hidden');
+                    previewAboutYouPrompt.textContent = selectedPrompt;
+                    previewAboutYouAnswer.textContent = selectedAnswer;
+                    previewAboutYouPrompt.classList.add('has-content');
+                    previewAboutYouAnswer.classList.add('has-content');
+                    previewAboutYouPrompt.classList.remove('skeleton-line');
+                    previewAboutYouAnswer.classList.remove('skeleton-line');
+
+
+                    completedSteps['about-you'] = true;
+                    toggleStepCompletion('about-you', true);
+                    updateProgressBar();
+                    closeModal();
+                }
+            } else if (currentStep === 'profile-picture') {
+                const profilePicturePreview = document.getElementById('profilePicturePreview');
+                if (profilePicturePreview && profilePicturePreview.src && !profilePicturePreview.classList.contains('hidden')) {
+                    profileAvatar.textContent = '';
+                    profileAvatar.style.backgroundColor = 'transparent';
+
+                    const imgElement = document.createElement('img');
+                    imgElement.src = profilePicturePreview.src;
+                    imgElement.alt = "Profilbild";
+                    imgElement.style.width = '100%';
+                    imgElement.style.height = '100%';
+                    imgElement.style.objectFit = 'cover';
+                    imgElement.style.borderRadius = '50%';
+
+                    profileAvatar.innerHTML = '';
+                    profileAvatar.appendChild(imgElement);
+
+                    // Update preview avatar as well
+                    previewAvatar.textContent = '';
+                    previewAvatar.style.backgroundColor = 'transparent';
+                    previewAvatar.classList.add('has-image'); // Add class for image state
+                    // Remove skeleton from preview avatar
+                    // The skeletonDiv will be removed from the DOM by innerHTML = ''
+                    previewAvatar.innerHTML = ''; // Clear existing skeleton and add image
+
+                    const previewImgElement = document.createElement('img');
+                    previewImgElement.src = profilePicturePreview.src;
+                    previewImgElement.alt = "Profilbild";
+                    previewImgElement.style.width = '100%';
+                    previewImgElement.style.height = '100%';
+                    previewImgElement.style.objectFit = 'cover';
+                    previewImgElement.style.borderRadius = '50%';
+                    previewAvatar.appendChild(previewImgElement);
+
+
+                    completedSteps['profile-picture'] = true;
+                    toggleStepCompletion('profile-picture', true);
+                    updateProgressBar();
+                    closeModal();
+                } else {
+                    showInlineError('profilePictureInput', 'Bitte laden Sie ein Profilbild hoch.');
+                }
+            }
+            // For any other step not explicitly handled, assume it's a generic completion
+            else if (currentStep) {
+                completedSteps[currentStep] = true; // Mark step as completed
+                toggleStepCompletion(currentStep, true); // Update step visual
+                updateProgressBar(); // Update progress bar
+                closeModal();
+            }
+        }
+
+        // Event Listeners for Add Buttons
+        // Moved inside DOMContentLoaded
+        // modalCloseButton.addEventListener('click', closeModal); // Moved inside DOMContentLoaded
+
+        // Initial setup of preview skeletons
+        function setupPreviewSkeletons() {
+            // Re-fetch elements to ensure they are not null after DOM is loaded
+            profileAvatar = document.getElementById('profile-avatar');
+            userName = document.getElementById('user-name');
+            progressBar = document.getElementById('profile-progress-bar');
+            completionPercentage = document.getElementById('completion-percentage');
+            addButtons = document.querySelectorAll('.add-button'); // This was the problematic line outside DOMContentLoaded
+            modalOverlay = document.getElementById('form-modal-overlay');
+            modalTitle = document.getElementById('modal-title');
+            modalBody = modalOverlay.querySelector('.modal-body');
+            modalCloseButton = document.getElementById('modal-close-button');
+            modalSaveButton = document.getElementById('modal-save-button'); // Re-assign global reference
+
+            previewAvatar = document.getElementById('preview-avatar');
+            // Re-fetch previewAvatarSkeleton, it might be removed by previous `innerHTML`
+            let currentPreviewAvatarSkeleton = document.getElementById('preview-avatar-skeleton');
+            if (currentPreviewAvatarSkeleton) {
+                 // Remove existing skeleton if it's there
+                currentPreviewAvatarSkeleton.remove();
+            }
+
+            previewName = document.getElementById('preview-name');
+            previewStatus = document.getElementById('preview-status');
+            previewStatusText = document.getElementById('preview-status-text');
+            previewPhoneVerified = document.getElementById('preview-phone-verified');
+            previewPhoneText = document.getElementById('preview-phone-text');
+            previewLocation = document.getElementById('preview-location');
+            previewZipCity = document.getElementById('preview-zip-city');
+            previewAboutYou = document.getElementById('preview-about-you');
+            previewAboutYouPrompt = document.getElementById('preview-about-you-prompt');
+            previewAboutYouAnswer = document.getElementById('preview-about-you-answer');
+            confettiContainer = document.getElementById('confetti-container');
+            customMessageBox = document.getElementById('custom-message-box');
+
+            // Apply skeleton styles
+            if (previewAvatar) {
+                // Ensure there's a skeleton circle if no image is present
+                if (!previewAvatar.querySelector('img')) {
+                    const skeletonDiv = document.createElement('div');
+                    skeletonDiv.id = 'preview-avatar-skeleton';
+                    skeletonDiv.classList.add('skeleton-circle');
+                    previewAvatar.innerHTML = ''; // Clear any default text
+                    previewAvatar.appendChild(skeletonDiv);
+                }
+                previewAvatar.classList.remove('has-image');
+            }
+
+            if (previewName) {
+                previewName.textContent = ''; // Clear existing text
+                previewName.classList.add('skeleton-line');
+                previewName.classList.remove('has-content');
+            }
+
+
+            // Status (Online text is static, no skeleton needed)
+            if (previewStatus) {
+                previewStatus.innerHTML = '<span class="status-dot"></span> <span id="preview-status-text">Online</span>';
+                previewStatus.classList.remove('has-content');
+            }
+
+
+            // Phone Verified
+            if (previewPhoneVerified) {
+                previewPhoneVerified.classList.add('hidden');
+                // Ensure the span exists inside, then add skeleton class
+                let phoneTextElement = previewPhoneVerified.querySelector('#preview-phone-text');
+                if (!phoneTextElement) {
+                    phoneTextElement = document.createElement('span');
+                    phoneTextElement.id = 'preview-phone-text';
+                    previewPhoneVerified.appendChild(phoneTextElement);
+                }
+                phoneTextElement.classList.add('skeleton-line');
+                phoneTextElement.textContent = ''; // Clear text content
+                phoneTextElement.style.width = '100%'; // Adjust width for skeleton
+            }
+
+
+            // Location
+            if (previewLocation) {
+                previewLocation.classList.add('hidden');
+                let zipCityElement = document.getElementById('preview-zip-city');
+                 if (!zipCityElement) {
+                    // This case should ideally not happen if HTML is consistent, but for robustness
+                    zipCityElement = document.createElement('span');
+                    zipCityElement.id = 'preview-zip-city';
+                    previewLocation.appendChild(zipCityElement);
+                }
+                zipCityElement.classList.add('skeleton-line');
+                zipCityElement.textContent = ''; // Clear text content
+                zipCityElement.style.width = '100%'; // Adjust width for skeleton
+            }
+
+
+            // About You
+            if (previewAboutYou) {
+                previewAboutYou.classList.add('hidden');
+                let aboutYouPromptElement = document.getElementById('preview-about-you-prompt');
+                if (!aboutYouPromptElement) {
+                    // This case should ideally not happen if HTML is consistent, but for robustness
+                    aboutYouPromptElement = document.createElement('span');
+                    aboutYouPromptElement.id = 'preview-about-you-prompt';
+                    previewAboutYou.querySelector('.preview-about-you-title').prepend(aboutYouPromptElement); // Prepend to keep SVG at end
+                }
+                aboutYouPromptElement.classList.add('skeleton-line');
+                aboutYouPromptElement.textContent = ''; // Clear text content
+                aboutYouPromptElement.style.width = '70%'; // Adjust width for skeleton
+
+                let aboutYouAnswerElement = document.getElementById('preview-about-you-answer');
+                if (!aboutYouAnswerElement) {
+                    // This case should ideally not happen if HTML is consistent, but for robustness
+                    aboutYouAnswerElement = document.createElement('p');
+                    aboutYouAnswerElement.id = 'preview-about-you-answer';
+                    aboutYouAnswerElement.classList.add('preview-about-you-text');
+                    previewAboutYou.appendChild(aboutYouAnswerElement);
+                }
+                aboutYouAnswerElement.classList.add('skeleton-line');
+                aboutYouAnswerElement.textContent = ''; // Clear text content
+                aboutYouAnswerElement.style.width = '100%';
+                aboutYouAnswerElement.style.height = '3rem'; // For multiline
+            }
+        }
+
+        // Call setup on initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            setupPreviewSkeletons();
+            updateProgressBar(); // Call to update progress bar and percentage
+
+            // Event Listeners for Add Buttons (moved inside DOMContentLoaded)
+            addButtons.forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const stepId = event.target.dataset.step;
+                    // Only open modal if the step is not completed
+                    if (completedSteps[stepId] === false) {
+                        openModal(stepId);
+                    }
+                });
+            });
+
+            // Event Listener for Modal Close Button (X icon) (moved inside DOMContentLoaded)
+            modalCloseButton.addEventListener('click', closeModal);
+        });
+    </script>
+</html>
 
