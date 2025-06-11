@@ -517,6 +517,7 @@
             font-size: 1.5rem; /* text-2xl */
             font-weight: 700;
             color: #1f2937;
+            margin-bottom: 0.25rem;
             height: 1.5rem; /* Approximate height of text */
             width: 80%; /* Approximate width of name */
             border-radius: 0.25rem;
@@ -570,7 +571,7 @@
         .preview-detail-row svg {
             width: 1rem;
             height: 1rem;
-            margin-right: 0.2rem;
+            margin-right: 0.5rem;
             color: #10b981; /* Green for verified, or a neutral color */
         }
 
@@ -600,10 +601,10 @@
         .preview-about-you-title {
             font-size: 0.875rem;
             font-weight: 600;
-            color: #4b5563;
+            color: #1f2937;
             margin-bottom: 0.5rem;
             display: flex;
-            align-items: top;
+            align-items: center;
             justify-content: space-between;
         }
 
@@ -618,9 +619,8 @@
 
         .preview-about-you-text {
             font-size: 0.875rem;
-            color: #1f2937;
+            color: #4b5563;
             line-height: 1.5;
-            flex-grow: 1; /* Allow text to grow */
         }
 
         .preview-about-you-text .skeleton-line {
@@ -899,27 +899,27 @@
 
         <div class="profile-preview-wrapper max-w-md">
             <h2>Vorschau</h2>
-            <p class="description">So wird Ihr Profil bei jeder Anfrage angezeigt, die Sie senden.</p>
+            <p class="description">So wird Ihr Profil bei jeder Autoanfrage angezeigt, die Sie senden.</p>
             <div class="profile-preview-container">
                 <div class="preview-avatar" id="preview-avatar">
+                    <!-- Initial skeleton circle -->
                     <div class="skeleton-circle" id="preview-avatar-skeleton"></div>
                 </div>
-                <div class="preview-name text-lg" id="preview-name"></div>
-                <div class="preview-status text-xs" id="preview-status">
+                <div class="preview-status" id="preview-status">
                     <span class="status-dot"></span> <span id="preview-status-text">Online</span>
                 </div>
-        
+                <div class="preview-name" id="preview-name"></div>
 
-                <div class="preview-detail-row hidden text-sm" id="preview-phone-verified">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5">
+                <div class="preview-detail-row hidden" id="preview-phone-verified">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
   <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 </svg>
 
                     <span id="preview-phone-text">Telefonnummer verifiziert</span>
                 </div>
 
-                <div class="preview-detail-row hidden text-sm" id="preview-location">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5">
+                <div class="preview-detail-row hidden" id="preview-location">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
   <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
 </svg>
@@ -928,7 +928,7 @@
                 </div>
 
                 <div class="preview-about-you hidden" id="preview-about-you">
-                    <div class="preview-about-you-title text-xs">
+                    <div class="preview-about-you-title">
                         <span id="preview-about-you-prompt"></span>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0  0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
@@ -957,7 +957,6 @@
             </div>
         </div>
     </div>
-</body>
 
     <script>
         // State to keep track of completed steps
@@ -1174,8 +1173,8 @@
             modalActions.appendChild(saveButton);
             // Update the global modalSaveButton reference
             modalSaveButton = document.getElementById('modal-save-button');
-            modalSaveButton.removeEventListener('click', handleModalSave); // Remove old listener
-            modalSaveButton.addEventListener('click', handleModalSave); // Add new listener
+            saveButton.removeEventListener('click', handleModalSave); // Remove old listener
+            saveButton.addEventListener('click', handleModalSave); // Add new listener
 
 
             if (stepName === 'name') {
@@ -1184,6 +1183,7 @@
                     <div class="form-group">
                         <label for="salutation">Anrede</label>
                         <select id="salutation" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Keine Angabe</option>
                             <option value="Herr">Herr</option>
                             <option value="Frau">Frau</option>
                             <option value="Divers">Divers</option>
@@ -1232,7 +1232,8 @@
                             <option value="United States">United States</option>
                             <option value="Canada">Canada</option>
                             <option value="United Kingdom">United Kingdom</option>
-                            </select>
+                            <!-- Add more countries as needed -->
+                        </select>
                     </div>
                 `;
                 saveButton.textContent = 'Speichern';
@@ -1255,47 +1256,42 @@
                  modalBody.innerHTML = `
                     <p class="text-gray-600 mb-4">Beantworte nur eine dieser Fragen, um deinem Profil ein Vertrauenssiegel zu verleihen.</p>
                     <div class="form-group">
-                        <label for="prompt1">Meine ideale Probefahrt ist...</label>
-                        <textarea id="prompt1" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
+                        <label for="aboutYouQuestion">Wählen Sie eine Profilfrage</label>
+                        <select id="aboutYouQuestion" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Wählen Sie eine Profilfrage</option>
+                            <option value="Meine ideale Probefahrt ist...">Meine ideale Probefahrt ist...</option>
+                            <option value="Ich suche ein Auto, das mir das Gefühl gibt...">Ich suche ein Auto, das mir das Gefühl gibt...</option>
+                            <option value="Ich wusste, es war Zeit für ein neues Auto, als...">Ich wusste, es war Zeit für ein neues Auto, als...</option>
+                            <option value="Ich schätze Verkäufer, die...">Ich schätze Verkäufer, die...</option>
+                        </select>
                     </div>
-                    <div class="form-group">
-                        <label for="prompt2">Ich suche ein Auto, das mir das Gefühl gibt...</label>
-                        <textarea id="prompt2" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="prompt3">Ich wusste, es war Zeit für ein neues Auto, als...</label>
-                        <textarea id="prompt3" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="prompt4">Ich schätze Verkäufer, die...</label>
-                        <textarea id="prompt4" class="about-you-textarea block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3"></textarea>
+                    <div class="form-group" id="aboutYouAnswerGroup" style="display: none;">
+                        <label for="aboutYouAnswer">Antwort</label>
+                        <textarea id="aboutYouAnswer" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3" placeholder="Ihre Antwort hier..."></textarea>
                     </div>
                 `;
                 saveButton.textContent = 'Speichern';
                 saveButton.style.backgroundColor = '#ef4444';
                 saveButton.style.borderColor = '#ef4444';
 
-                // Add event listeners for "About you" textareas
-                const aboutYouTextareas = modalBody.querySelectorAll('.about-you-textarea');
-                aboutYouTextareas.forEach(textarea => {
-                    textarea.addEventListener('input', (event) => {
-                        const currentTextarea = event.target;
-                        if (currentTextarea.value.trim() !== '') {
-                            // If this textarea has content, disable others
-                            aboutYouTextareas.forEach(otherTextarea => {
-                                if (otherTextarea !== currentTextarea) {
-                                    otherTextarea.disabled = true;
-                                    otherTextarea.style.backgroundColor = '#f3f4f6'; /* Visually indicate disabled */
-                                }
-                            });
-                        } else {
-                            // If this textarea is cleared, enable all
-                            aboutYouTextareas.forEach(otherTextarea => {
-                                otherTextarea.disabled = false;
-                                otherTextarea.style.backgroundColor = ''; /* Remove disabled visual */
-                            });
-                        }
-                    });
+                // Add event listeners for "About you" select and textarea
+                const aboutYouQuestionSelect = document.getElementById('aboutYouQuestion');
+                const aboutYouAnswerGroup = document.getElementById('aboutYouAnswerGroup');
+                const aboutYouAnswerTextarea = document.getElementById('aboutYouAnswer');
+
+                aboutYouQuestionSelect.addEventListener('change', (event) => {
+                    if (event.target.value) {
+                        aboutYouAnswerGroup.style.display = 'block';
+                        // Pre-fill textarea with the selected question. User will complete it.
+                        // Or, if it's meant to be the answer, maybe just clear it.
+                        // As per image, it seems the selected question appears above the textarea.
+                        // So, we clear the textarea and allow user to type.
+                        aboutYouAnswerTextarea.value = ""; // Clear for new input
+                        aboutYouAnswerTextarea.focus();
+                    } else {
+                        aboutYouAnswerGroup.style.display = 'none';
+                        aboutYouAnswerTextarea.value = "";
+                    }
                 });
 
             } else if (stepName === 'profile-picture') {
@@ -1367,10 +1363,8 @@
             clearInlineError('city');
             clearInlineError('country');
             clearInlineError('phoneNumber');
-            clearInlineError('prompt1');
-            clearInlineError('prompt2');
-            clearInlineError('prompt3');
-            clearInlineError('prompt4');
+            clearInlineError('aboutYouQuestion'); // Clear error for aboutYouQuestion
+            clearInlineError('aboutYouAnswer'); // Clear error for aboutYouAnswer
             clearInlineError('profilePictureInput');
 
 
@@ -1458,36 +1452,23 @@
                     showInlineError('phoneNumber', 'Bitte geben Sie eine gültige Telefonnummer ein (mindestens 8 Ziffern).'); // Updated message
                 }
             } else if (currentStep === 'about-you') {
-                const prompt1 = document.getElementById('prompt1').value;
-                const prompt2 = document.getElementById('prompt2').value;
-                const prompt3 = document.getElementById('prompt3').value;
-                const prompt4 = document.getElementById('prompt4').value;
+                const aboutYouQuestion = document.getElementById('aboutYouQuestion').value;
+                const aboutYouAnswer = document.getElementById('aboutYouAnswer').value;
                 let isValid = true;
 
-                let selectedPrompt = '';
-                let selectedAnswer = '';
-
-                if (prompt1) {
-                    selectedPrompt = 'Meine ideale Probefahrt ist...';
-                    selectedAnswer = prompt1;
-                } else if (prompt2) {
-                    selectedPrompt = 'Ich suche ein Auto, das mir das Gefühl gibt...';
-                    selectedAnswer = prompt2;
-                } else if (prompt3) {
-                    selectedPrompt = 'Ich wusste, es war Zeit für ein neues Auto, als...';
-                    selectedAnswer = prompt3;
-                } else if (prompt4) {
-                    selectedPrompt = 'Ich schätze Verkäufer, die...';
-                    selectedAnswer = prompt4;
-                } else {
-                    showInlineError('prompt1', 'Bitte füllen Sie mindestens eine Frage aus.');
+                if (!aboutYouQuestion) {
+                    showInlineError('aboutYouQuestion', 'Bitte wählen Sie eine Profilfrage aus.');
+                    isValid = false;
+                }
+                if (!aboutYouAnswer.trim()) {
+                    showInlineError('aboutYouAnswer', 'Bitte geben Sie Ihre Antwort ein.');
                     isValid = false;
                 }
 
                 if (isValid) {
                     previewAboutYou.classList.remove('hidden');
-                    previewAboutYouPrompt.textContent = selectedPrompt;
-                    previewAboutYouAnswer.textContent = selectedAnswer;
+                    previewAboutYouPrompt.textContent = aboutYouQuestion;
+                    previewAboutYouAnswer.textContent = aboutYouAnswer;
                     previewAboutYouPrompt.classList.add('has-content');
                     previewAboutYouAnswer.classList.add('has-content');
                     previewAboutYouPrompt.classList.remove('skeleton-line');
@@ -1521,8 +1502,9 @@
                     previewAvatar.style.backgroundColor = 'transparent';
                     previewAvatar.classList.add('has-image'); // Add class for image state
                     // Remove skeleton from preview avatar
-                    // The skeletonDiv will be removed from the DOM by innerHTML = ''
-                    previewAvatar.innerHTML = ''; // Clear existing skeleton and add image
+                    if (document.getElementById('preview-avatar-skeleton')) { // Check if it exists before removing
+                        document.getElementById('preview-avatar-skeleton').remove();
+                    }
 
                     const previewImgElement = document.createElement('img');
                     previewImgElement.src = profilePicturePreview.src;
@@ -1531,6 +1513,7 @@
                     previewImgElement.style.height = '100%';
                     previewImgElement.style.objectFit = 'cover';
                     previewImgElement.style.borderRadius = '50%';
+                    previewAvatar.innerHTML = ''; // Clear content before appending
                     previewAvatar.appendChild(previewImgElement);
 
 
@@ -1557,7 +1540,7 @@
 
         // Initial setup of preview skeletons
         function setupPreviewSkeletons() {
-            // Re-fetch elements to ensure they are not null after DOM is loaded
+            // Assign DOM elements inside DOMContentLoaded to ensure they exist
             profileAvatar = document.getElementById('profile-avatar');
             userName = document.getElementById('user-name');
             progressBar = document.getElementById('profile-progress-bar');
@@ -1567,7 +1550,9 @@
             modalTitle = document.getElementById('modal-title');
             modalBody = modalOverlay.querySelector('.modal-body');
             modalCloseButton = document.getElementById('modal-close-button');
-            modalSaveButton = document.getElementById('modal-save-button'); // Re-assign global reference
+            modalSaveButton = document.getElementById('modal-save-button');
+            customMessageBox = document.getElementById('custom-message-box');
+
 
             previewAvatar = document.getElementById('preview-avatar');
             // Re-fetch previewAvatarSkeleton, it might be removed by previous `innerHTML`
@@ -1587,8 +1572,8 @@
             previewAboutYou = document.getElementById('preview-about-you');
             previewAboutYouPrompt = document.getElementById('preview-about-you-prompt');
             previewAboutYouAnswer = document.getElementById('preview-about-you-answer');
-            confettiContainer = document.getElementById('confetti-container');
-            customMessageBox = document.getElementById('custom-message-box');
+            confettiContainer = document.getElementById('confetti-container'); // Ensure this is fetched
+
 
             // Apply skeleton styles
             if (previewAvatar) {
@@ -1620,7 +1605,6 @@
             // Phone Verified
             if (previewPhoneVerified) {
                 previewPhoneVerified.classList.add('hidden');
-                // Ensure the span exists inside, then add skeleton class
                 let phoneTextElement = previewPhoneVerified.querySelector('#preview-phone-text');
                 if (!phoneTextElement) {
                     phoneTextElement = document.createElement('span');
@@ -1638,7 +1622,6 @@
                 previewLocation.classList.add('hidden');
                 let zipCityElement = document.getElementById('preview-zip-city');
                  if (!zipCityElement) {
-                    // This case should ideally not happen if HTML is consistent, but for robustness
                     zipCityElement = document.createElement('span');
                     zipCityElement.id = 'preview-zip-city';
                     previewLocation.appendChild(zipCityElement);
@@ -1654,7 +1637,6 @@
                 previewAboutYou.classList.add('hidden');
                 let aboutYouPromptElement = document.getElementById('preview-about-you-prompt');
                 if (!aboutYouPromptElement) {
-                    // This case should ideally not happen if HTML is consistent, but for robustness
                     aboutYouPromptElement = document.createElement('span');
                     aboutYouPromptElement.id = 'preview-about-you-prompt';
                     previewAboutYou.querySelector('.preview-about-you-title').prepend(aboutYouPromptElement); // Prepend to keep SVG at end
@@ -1665,7 +1647,6 @@
 
                 let aboutYouAnswerElement = document.getElementById('preview-about-you-answer');
                 if (!aboutYouAnswerElement) {
-                    // This case should ideally not happen if HTML is consistent, but for robustness
                     aboutYouAnswerElement = document.createElement('p');
                     aboutYouAnswerElement.id = 'preview-about-you-answer';
                     aboutYouAnswerElement.classList.add('preview-about-you-text');
@@ -1683,7 +1664,7 @@
             setupPreviewSkeletons();
             updateProgressBar(); // Call to update progress bar and percentage
 
-            // Event Listeners for Add Buttons (moved inside DOMContentLoaded)
+            // Event Listeners for Add Buttons
             addButtons.forEach(button => {
                 button.addEventListener('click', (event) => {
                     const stepId = event.target.dataset.step;
@@ -1694,9 +1675,9 @@
                 });
             });
 
-            // Event Listener for Modal Close Button (X icon) (moved inside DOMContentLoaded)
+            // Event Listener for Modal Close Button (X icon)
             modalCloseButton.addEventListener('click', closeModal);
         });
     </script>
+</body>
 </html>
-
