@@ -349,6 +349,7 @@
             font-size: 0.875rem; /* text-sm */
             color: #1f2937;
             transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+            padding-right: 2.5rem; /* Added padding to prevent caret overlap */
         }
 
         .form-group input:focus,
@@ -571,7 +572,7 @@
         .preview-detail-row svg {
             width: 1rem;
             height: 1rem;
-            margin-right: 0.5rem;
+            margin-right: 0.2rem;
             color: #10b981; /* Green for verified, or a neutral color */
         }
 
@@ -604,7 +605,7 @@
             color: #1f2937;
             margin-bottom: 0.5rem;
             display: flex;
-            align-items: center;
+            align-items: top;
             justify-content: space-between;
         }
 
@@ -621,6 +622,8 @@
             font-size: 0.875rem;
             color: #4b5563;
             line-height: 1.5;
+            height: auto; /* Allow height to grow with content */
+            overflow: hidden; /* Hide overflow if text is too long and cannot wrap */
         }
 
         .preview-about-you-text .skeleton-line {
@@ -902,24 +905,25 @@
             <p class="description">So wird Ihr Profil bei jeder Autoanfrage angezeigt, die Sie senden.</p>
             <div class="profile-preview-container">
                 <div class="preview-avatar" id="preview-avatar">
-                    <!-- Initial skeleton circle -->
                     <div class="skeleton-circle" id="preview-avatar-skeleton"></div>
                 </div>
-                <div class="preview-status" id="preview-status">
+                <div class="preview-name text-lg -mt-3" id="preview-name"></div>
+                <div class="preview-status -mt-1.5 text-xs" id="preview-status">
                     <span class="status-dot"></span> <span id="preview-status-text">Online</span>
                 </div>
-                <div class="preview-name" id="preview-name"></div>
+                
 
                 <div class="preview-detail-row hidden" id="preview-phone-verified">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
-  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 stroke-indigo-700">
+  <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 </svg>
+
 
                     <span id="preview-phone-text">Telefonnummer verifiziert</span>
                 </div>
 
                 <div class="preview-detail-row hidden" id="preview-location">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 stroke-indigo-700">
   <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
   <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
 </svg>
@@ -1282,10 +1286,6 @@
                 aboutYouQuestionSelect.addEventListener('change', (event) => {
                     if (event.target.value) {
                         aboutYouAnswerGroup.style.display = 'block';
-                        // Pre-fill textarea with the selected question. User will complete it.
-                        // Or, if it's meant to be the answer, maybe just clear it.
-                        // As per image, it seems the selected question appears above the textarea.
-                        // So, we clear the textarea and allow user to type.
                         aboutYouAnswerTextarea.value = ""; // Clear for new input
                         aboutYouAnswerTextarea.focus();
                     } else {
@@ -1385,13 +1385,9 @@
                 if (isValid) {
                     userName.textContent = `${firstName} ${lastName}`;
                     profileAvatar.textContent = `${firstName.charAt(0)}${lastName.charAt(0)}`;
-
-                    // Update preview
-                    previewName.textContent = `${firstName} ${lastName}`;
+                    previewName.textContent = `${firstName} ${lastName}`; // Update preview
                     previewName.classList.add('has-content');
                     previewName.classList.remove('skeleton-line');
-
-
                     completedSteps['name'] = true;
                     toggleStepCompletion('name', true);
                     updateProgressBar();
@@ -1441,7 +1437,7 @@
                 const digitsOnly = phoneNumber.replace(/\D/g, ''); // Remove non-digits
                 if (phoneNumber && digitsOnly.length >= 8) { // Changed from 5 to 8
                     previewPhoneVerified.classList.remove('hidden'); // Show phone verified in preview
-                    previewPhoneText.textContent = 'Telefonnummer verifiziert'; // Set text content
+                    previewPhoneText.textContent = 'Telefonnummer nicht verifiziert'; // Set text content
                     previewPhoneText.classList.add('has-content'); // Mark text as having content
                     previewPhoneText.classList.remove('skeleton-line');
                     completedSteps['phone-number'] = true;
@@ -1661,6 +1657,32 @@
 
         // Call setup on initial load
         document.addEventListener('DOMContentLoaded', () => {
+            // Assign DOM elements inside DOMContentLoaded to ensure they exist
+            profileAvatar = document.getElementById('profile-avatar');
+            userName = document.getElementById('user-name');
+            progressBar = document.getElementById('profile-progress-bar');
+            completionPercentage = document.getElementById('completion-percentage');
+            addButtons = document.querySelectorAll('.add-button'); // This was the problematic line outside DOMContentLoaded
+            modalOverlay = document.getElementById('form-modal-overlay');
+            modalTitle = document.getElementById('modal-title');
+            modalBody = modalOverlay.querySelector('.modal-body');
+            modalCloseButton = document.getElementById('modal-close-button');
+            modalSaveButton = document.getElementById('modal-save-button');
+            customMessageBox = document.getElementById('custom-message-box');
+
+            previewAvatar = document.getElementById('preview-avatar');
+            previewName = document.getElementById('preview-name');
+            previewStatus = document.getElementById('preview-status');
+            previewStatusText = document.getElementById('preview-status-text');
+            previewPhoneVerified = document.getElementById('preview-phone-verified');
+            previewPhoneText = document.getElementById('preview-phone-text');
+            previewLocation = document.getElementById('preview-location');
+            previewZipCity = document.getElementById('preview-zip-city');
+            previewAboutYou = document.getElementById('preview-about-you');
+            previewAboutYouPrompt = document.getElementById('preview-about-you-prompt');
+            previewAboutYouAnswer = document.getElementById('preview-about-you-answer');
+            confettiContainer = document.getElementById('confetti-container'); // Ensure this is fetched
+
             setupPreviewSkeletons();
             updateProgressBar(); // Call to update progress bar and percentage
 
