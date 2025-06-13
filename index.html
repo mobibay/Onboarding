@@ -198,6 +198,7 @@
             align-items: center;
             margin-right: 1rem;
             flex-shrink: 0;
+            transition: background-color 0.3s ease-in-out; /* Smooth transition for background */
         }
 
         .step-icon svg {
@@ -206,9 +207,23 @@
             color: #4f46e5; /* Indigo-600 */
         }
 
-        .step-icon .checkmark-icon {
-            color: #10b981; /* Green-500 */
+        /* Styles for the green checkmark background */
+        .step-icon.completed {
+            background-color: #f0fdf4; /* Green-50 */
         }
+
+        .step-icon.completed .checkmark-icon {
+            color: #059669; /* Green-600 */
+        }
+        /* Ensure edit-icon is hidden when completed, its color is irrelevant here as it's hidden */
+        .step-icon.completed .edit-icon {
+            display: none;
+        }
+        /* Ensure checkmark-icon is hidden when not completed */
+        .step-icon .checkmark-icon:not(.hidden) {
+            display: flex; /* Or block, depending on desired layout */
+        }
+
 
         .step-content {
             /* No flex-grow here, as it's handled by step-details-group's width */
@@ -430,13 +445,15 @@
             border-radius: 0.625rem; /* rounded-lg */
             font-weight: 500; /* font-medium */
             cursor: pointer;
-            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, opacity 0.2s ease-in-out;
         }
 
         .modal-button.save {
             background-color: #ef4444; /* Red-500 from design */
             color: #ffffff;
             border: 1px solid #ef4444;
+            opacity: 0.5; /* Default inactive state */
+            pointer-events: none; /* Disable interaction */
         }
 
         .modal-button.save:hover {
@@ -444,16 +461,63 @@
             border-color: #dc2626;
         }
 
+        .modal-button.save.active {
+            opacity: 1; /* Active state */
+            pointer-events: auto; /* Enable interaction */
+        }
+
         /* Specific style for the "Fertig" button in the profile picture modal */
         .modal-button.done-purple {
             background-color: transparent;
             color: #581c87; /* Purple color */
             border: 1px solid #581c87;
+            opacity: 0.5; /* Default inactive state */
+            pointer-events: none; /* Disable interaction */
         }
 
         .modal-button.done-purple:hover {
             background-color: #ede9fe; /* Light purple on hover */
             border-color: #581c87;
+        }
+
+        .modal-button.done-purple.active {
+            opacity: 1; /* Active state */
+            pointer-events: auto; /* Enable interaction */
+        }
+
+        /* New style for the edit button */
+        .edit-step-button {
+            border: 1px solid #4f46e5; /* Indigo border */
+            color: #4f46e5; /* Indigo text */
+            background-color: #e0e7ff; /* Indigo-100 */
+            border-radius: 0.5rem;
+            width: auto; /* Adjust width to content */
+            padding: 0.5rem 0.75rem; /* Adjusted padding */
+            font-size: 0.75rem; /* Adjusted font size */
+            font-weight: 500;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .edit-step-button:hover {
+            background-color: #c7d2fe; /* Darker Indigo-200 on hover */
+            transform: translateY(-1px);
+        }
+
+        .edit-step-button:active {
+            background-color: #a5b4fc; /* Even darker Indigo-300 on active */
+            transform: translateY(0);
+        }
+
+        .edit-step-button svg {
+            width: 1rem; /* Adjusted icon size */
+            height: 1rem; /* Adjusted icon size */
+            margin-left: 0.25rem; /* Space between text and icon */
+            color: #4f46e5; /* Match button text color */
         }
 
 
@@ -883,7 +947,7 @@
                     <div class="step-details-group">
                         <div class="step-icon">
                            <svg class="edit-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 9 0 0 1 12 21a8.966 9 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                             </svg>
                             <svg class="checkmark-icon hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                                 <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12zm13.36-1.814a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z" clip-rule="evenodd" />
@@ -971,6 +1035,33 @@
             'about-you': false, // Reordered
             'profile-picture': false // Reordered
         };
+
+        // Store user data persistently (e.g., using localStorage, or a backend later)
+        // For this example, we'll use a simple in-memory object, which will reset on page refresh.
+        // To make it truly persistent across sessions, you would use localStorage:
+        // const userData = JSON.parse(localStorage.getItem('userProfileData')) || { ...initialData };
+        // And save: localStorage.setItem('userProfileData', JSON.stringify(userData));
+        const userData = {
+            name: {
+                salutation: '',
+                firstName: '',
+                lastName: ''
+            },
+            address: {
+                street: '',
+                nr: '',
+                zipCode: '',
+                city: '',
+                country: '' // Changed default to empty string for initial state
+            },
+            phoneNumber: '',
+            aboutYou: {
+                question: '',
+                answer: ''
+            },
+            profilePictureUrl: ''
+        };
+
 
         // DOM elements (declared globally but assigned in DOMContentLoaded)
         let profileAvatar;
@@ -1072,22 +1163,44 @@
         function updateProgressBar() {
             const totalSteps = Object.keys(completedSteps).length;
             const completedCount = Object.values(completedSteps).filter(status => status).length;
-            const percentage = (completedCount / totalSteps) * 100;
+            const percentage = Math.round((completedCount / totalSteps) * 100); // Round to whole number
 
             progressBar.style.width = `${percentage}%`;
             completionPercentage.textContent = `${percentage}% abgeschlossen`; // Translated
 
-            // Update avatar text if name is completed
-            if (completedSteps['name'] && userName) {
-                if (userName.textContent === 'Dein Name') { // Translated
-                    profileAvatar.textContent = 'MM'; // Example initials
-                    userName.textContent = 'Max Mustermann'; // Example name
-                }
-            } else if (!completedSteps['name'] && userName && userName.textContent === 'Max Mustermann') {
-                // Revert if name is uncompleted (e.g., for testing reset)
-                profileAvatar.textContent = 'YN';
-                userName.textContent = 'Dein Name'; // Translated
+            // Update main profile summary based on current data
+            const { name, profilePictureUrl } = userData;
+
+            if (name.firstName || name.lastName) {
+                userName.textContent = `${name.firstName} ${name.lastName}`.trim();
+                let initials = '';
+                if (name.firstName) initials += name.firstName.charAt(0);
+                if (name.lastName) initials += name.lastName.charAt(0);
+                profileAvatar.textContent = initials.toUpperCase();
+            } else {
+                profileAvatar.textContent = 'DN'; // "Dein Name" initials
+                userName.textContent = 'Dein Name';
             }
+
+            if (profilePictureUrl) {
+                profileAvatar.innerHTML = `<img src="${profilePictureUrl}" alt="Profilbild">`;
+                profileAvatar.style.backgroundColor = 'transparent'; // Remove background if image is present
+            } else if (!(name.firstName || name.lastName)) { // Check if both are empty
+                // Only revert to initials if no name is set AND no profile picture
+                 profileAvatar.textContent = 'DN';
+                 profileAvatar.style.backgroundColor = '#4f46e5';
+                 profileAvatar.classList.remove('has-image');
+            }
+            // If a name is set, but no picture, ensure initials are displayed.
+            else if (name.firstName || name.lastName) {
+                let initials = '';
+                if (name.firstName) initials += name.firstName.charAt(0);
+                if (name.lastName) initials += name.lastName.charAt(0);
+                profileAvatar.textContent = initials.toUpperCase();
+                profileAvatar.style.backgroundColor = '#4f46e5';
+                profileAvatar.classList.remove('has-image');
+            }
+
 
             // Trigger confetti if all steps are completed
             if (percentage === 100) {
@@ -1099,44 +1212,133 @@
         function toggleStepCompletion(stepId, isCompleted) {
             const stepElement = document.getElementById(`step-${stepId}`);
             if (stepElement) {
-                const editIcon = stepElement.querySelector('.edit-icon');
-                const checkmarkIcon = stepElement.querySelector('.checkmark-icon'); // This is not used for the left icon anymore
-                const addButton = stepElement.querySelector('.add-button');
-                const stepParagraph = stepElement.querySelector('.step-content p');
+                // Correctly target the button using its data-step attribute, which remains constant
+                const button = stepElement.querySelector(`button[data-step="${stepId}"]`);
+                const stepContentDiv = stepElement.querySelector('.step-content'); // Get the parent div for h3 and p
+                const stepParagraph = stepContentDiv.querySelector('p');
+                const stepIconDiv = stepElement.querySelector('.step-icon');
+                const editIcon = stepIconDiv.querySelector('.edit-icon');
+                const checkmarkIcon = stepIconDiv.querySelector('.checkmark-icon');
 
-                if (isCompleted) {
-                    // The left icon (edit-icon) always stays visible as per new request
-                    // The checkmark-icon in the step-icon div remains hidden.
+                if (button) { // Ensure button exists before manipulating
+                    if (isCompleted) {
+                        // Change button to "Bearbeiten" with icon
+                        button.className = 'edit-step-button'; // Apply edit button class
+                        button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
+                                </svg>`;
+                        
+                        // Show checkmark icon, hide edit icon
+                        editIcon.classList.add('hidden');
+                        checkmarkIcon.classList.remove('hidden');
+                        // Set checkmark icon color to green-600
+                        checkmarkIcon.style.color = '#059669'; // Green-600
+                        // Set step icon background to green-50
+                        stepIconDiv.classList.add('completed'); // Uses .step-icon.completed for background color
 
-                    // Update descriptive text based on completion
-                    if (stepId === 'name') stepParagraph.textContent = 'Anfragen mit Namen erhalten mehr Antworten und schaffen Vertrauen'; // Translated
-                    if (stepId === 'profile-picture') stepParagraph.textContent = 'Zeigen Sie, dass Sie echt sind und kein Spam, indem Sie ein Profilbild hinzufügen'; // Translated
+                        // Update descriptive text based on completion, but keep phone number text fixed
+                        if (stepId === 'name') stepParagraph.textContent = 'Anfragen mit Namen erhalten mehr Antworten und schaffen Vertrauen'; // Translated
+                        else if (stepId === 'profile-picture') stepParagraph.textContent = 'Zeigen Sie, dass Sie echt sind und kein Spam, indem Sie ein Profilbild hinzufügen'; // Translated
+                        else if (stepId === 'address') stepParagraph.textContent = 'Ihre Postleitzahl ist in Ihrem Profil sichtbar.';
+                        // For phone number, keep the original text unchanged
+                        // else if (stepId === 'phone-number') stepParagraph.textContent = 'Ihre Telefonnummer ist verifiziert.'; // Original: 'Wir informieren Personen, mit denen Sie interagieren, ob Ihre Telefonnummer verifiziert ist.'
+                        else if (stepId === 'about-you') stepParagraph.textContent = 'Sie haben eine Frage über sich selbst beantwortet.';
 
-                    // Change the add button to a checkmark
-                    addButton.textContent = '✓'; // Change button to checkmark
-                    addButton.style.backgroundColor = '#dcfce7'; /* Green-100 */
-                    addButton.style.color = '#10b981'; /* Green-500 */
-                    addButton.style.cursor = 'default';
-                    addButton.disabled = true; // Disable button after completion
-                    addButton.style.border = '1px solid #10b981'; // Green border for completed
-                } else {
-                    // Revert to initial state
-                    // The left icon (edit-icon) always stays visible
-                    // The checkmark-icon in the step-icon div remains hidden.
+                    } else {
+                        // Revert to initial state
+                        button.className = 'add-button'; // Revert to add button class
+                        button.textContent = '+';
+                        
+                        // Show edit icon, hide checkmark icon
+                        editIcon.classList.remove('hidden');
+                        checkmarkIcon.classList.add('hidden');
+                        // Reset checkmark icon color (though hidden, good practice)
+                        checkmarkIcon.style.color = '#10b981'; // Green-500 default
+                        stepIconDiv.classList.remove('completed'); // Remove class for green background
 
-                    // Revert descriptive text
-                    if (stepId === 'name') stepParagraph.textContent = 'Ein echter Name verleiht Ihren Nachrichten und Anfragen Glaubwürdigkeit.'; // Translated
-                    if (stepId === 'profile-picture') stepParagraph.textContent = 'Ein Profilbild zeigt, dass Sie echt sind und kein Spam.'; // Translated
-                    addButton.textContent = '+';
-                    addButton.style.backgroundColor = 'transparent';
-                    addButton.style.color = '#581c87';
-                    addButton.style.cursor = 'pointer';
-                    addButton.disabled = false;
-                    addButton.style.border = '1px solid #581c87'; // Revert border
+                        // Revert descriptive text, but keep phone number text fixed
+                        if (stepId === 'name') stepParagraph.textContent = 'Ein echter Name verleiht Ihren Nachrichten und Anfragen Glaubwürdigkeit.'; // Translated
+                        else if (stepId === 'profile-picture') stepParagraph.textContent = 'Ein Profilbild zeigt, dass Sie echt sind und kein Spam.'; // Translated
+                        else if (stepId === 'address') stepParagraph.textContent = 'Wir zeigen nur Ihre Postleitzahl in Ihrem Profil an.';
+                        // For phone number, keep the original text unchanged
+                        // else if (stepId === 'phone-number') stepParagraph.textContent = 'Wir informieren Personen, mit denen Sie interagieren, ob Ihre Telefonnummer verifiziert ist.';
+                        else if (stepId === 'about-you') stepParagraph.textContent = 'Beantworte eine Frage über dich, um deinem Profil ein 100%iges Vertrauenssiegel zu verleihen.';
+                    }
                 }
                 stepElement.dataset.completed = isCompleted; // Update data attribute
             }
         }
+
+        /**
+         * Toggles the active state (opacity and pointer-events) of the modal save button.
+         * @param {boolean} isActive - True to enable the button, false to disable.
+         */
+        function toggleSaveButtonState(isActive) {
+            if (modalSaveButton) {
+                if (isActive) {
+                    modalSaveButton.classList.add('active');
+                } else {
+                    modalSaveButton.classList.remove('active');
+                }
+            }
+        }
+
+        /**
+         * Checks the validity of the Name form fields.
+         * @returns {boolean} True if any name field has content, false otherwise.
+         */
+        function checkNameFormValidity() {
+            const firstName = document.getElementById('firstName')?.value.trim() || '';
+            const lastName = document.getElementById('lastName')?.value.trim() || '';
+            return firstName !== '' || lastName !== '';
+        }
+
+        /**
+         * Checks the validity of the Address form fields.
+         * @returns {boolean} True if any address field has content, false otherwise.
+         */
+        function checkAddressFormValidity() {
+            const street = document.getElementById('street')?.value.trim() || '';
+            const nr = document.getElementById('nr')?.value.trim() || '';
+            const zipCode = document.getElementById('zipCode')?.value.trim() || '';
+            const city = document.getElementById('city')?.value.trim() || '';
+            const country = document.getElementById('country')?.value || ''; // Select value might be empty string
+
+            return street !== '' || nr !== '' || zipCode !== '' || city !== '' || country !== '';
+        }
+
+        /**
+         * Checks the validity of the Phone Number form field.
+         * @returns {boolean} True if phone number has content AND is valid, false otherwise.
+         * Returns false if the field is empty.
+         */
+        function checkPhoneNumberFormValidity() {
+            const phoneNumber = document.getElementById('phoneNumber')?.value.trim() || '';
+            const digitsOnly = phoneNumber.replace(/\D/g, '');
+            // Only consider valid if there is content AND it meets the length requirement
+            return phoneNumber.length > 0 && digitsOnly.length >= 8;
+        }
+
+        /**
+         * Checks the validity of the About You form fields.
+         * @returns {boolean} True if both question and answer have content, false otherwise.
+         */
+        function checkAboutYouFormValidity() {
+            const aboutYouQuestion = document.getElementById('aboutYouQuestion')?.value || '';
+            const aboutYouAnswer = document.getElementById('aboutYouAnswer')?.value.trim() || '';
+            return aboutYouQuestion !== '' && aboutYouAnswer !== '';
+        }
+
+        /**
+         * Checks the validity of the Profile Picture form field.
+         * @returns {boolean} True if an image is selected, false otherwise.
+         */
+        function checkProfilePictureFormValidity() {
+            const profilePicturePreview = document.getElementById('profilePicturePreview');
+            // Check if there's a src and it's not hidden (meaning an image is loaded)
+            return profilePicturePreview && profilePicturePreview.src && !profilePicturePreview.classList.contains('hidden');
+        }
+
 
         // Function to open the modal
         function openModal(stepName) {
@@ -1196,15 +1398,31 @@
                     <div class="form-group">
                         <label for="firstName">Vorname</label>
                         <input type="text" id="firstName" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Vornamen eingeben">
+                        <div id="firstNameError" class="inline-error-message hidden"></div>
                     </div>
                     <div class="form-group">
                         <label for="lastName">Nachname</label>
                         <input type="text" id="lastName" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="Nachnamen eingeben">
+                        <div id="lastNameError" class="inline-error-message hidden"></div>
                     </div>
                 `;
                 saveButton.textContent = 'Speichern';
                 saveButton.style.backgroundColor = '#ef4444';
                 saveButton.style.borderColor = '#ef4444';
+
+                // Populate with existing data
+                document.getElementById('salutation').value = userData.name.salutation;
+                document.getElementById('firstName').value = userData.name.firstName;
+                document.getElementById('lastName').value = userData.name.lastName;
+
+                // Add event listeners for dynamic button state
+                const nameInputs = [document.getElementById('firstName'), document.getElementById('lastName')];
+                nameInputs.forEach(input => {
+                    input.addEventListener('input', () => toggleSaveButtonState(checkNameFormValidity()));
+                });
+                // Set initial state based on current data
+                toggleSaveButtonState(checkNameFormValidity());
+
 
             } else if (stepName === 'address') {
                 modalBody.innerHTML = `
@@ -1213,36 +1431,64 @@
                         <div class="form-group">
                             <label for="street">Straße</label>
                             <input type="text" id="street" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                            <div id="streetError" class="inline-error-message hidden"></div>
                         </div>
                         <div class="form-group" style="flex: 0.3;">
                             <label for="nr">Nr.</label>
                             <input type="text" id="nr" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                            <div id="nrError" class="inline-error-message hidden"></div>
                         </div>
                     </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label for="zipCode">Postleitzahl</label>
                             <input type="text" id="zipCode" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                            <div id="zipCodeError" class="inline-error-message hidden"></div>
                         </div>
                         <div class="form-group">
                             <label for="city">Ort</label>
                             <input type="text" id="city" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="">
+                            <div id="cityError" class="inline-error-message hidden"></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label for="country">Land</label>
                         <select id="country" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            <option value="">Land auswählen</option> <!-- New placeholder option -->
                             <option value="Deutschland">Deutschland</option>
                             <option value="United States">United States</option>
                             <option value="Canada">Canada</option>
                             <option value="United Kingdom">United Kingdom</option>
                             <!-- Add more countries as needed -->
                         </select>
+                        <div id="countryError" class="inline-error-message hidden"></div>
                     </div>
                 `;
                 saveButton.textContent = 'Speichern';
                 saveButton.style.backgroundColor = '#ef4444';
                 saveButton.style.borderColor = '#ef4444';
+
+                // Populate with existing data
+                document.getElementById('street').value = userData.address.street;
+                document.getElementById('nr').value = userData.address.nr;
+                document.getElementById('zipCode').value = userData.address.zipCode;
+                document.getElementById('city').value = userData.address.city;
+                document.getElementById('country').value = userData.address.country;
+
+                // Add event listeners for dynamic button state
+                const addressInputs = [
+                    document.getElementById('street'),
+                    document.getElementById('nr'),
+                    document.getElementById('zipCode'),
+                    document.getElementById('city'),
+                    document.getElementById('country')
+                ];
+                addressInputs.forEach(input => {
+                    input.addEventListener('input', () => toggleSaveButtonState(checkAddressFormValidity()));
+                    input.addEventListener('change', () => toggleSaveButtonState(checkAddressFormValidity())); // For select
+                });
+                // Set initial state based on current data
+                toggleSaveButtonState(checkAddressFormValidity());
 
             } else if (stepName === 'phone-number') {
                 modalBody.innerHTML = `
@@ -1256,8 +1502,18 @@
                 saveButton.textContent = 'Speichern';
                 saveButton.style.backgroundColor = '#ef4444';
                 saveButton.style.borderColor = '#ef4444';
+
+                // Populate with existing data
+                document.getElementById('phoneNumber').value = userData.phoneNumber;
+
+                // Add event listener for dynamic button state
+                const phoneNumberInput = document.getElementById('phoneNumber');
+                phoneNumberInput.addEventListener('input', () => toggleSaveButtonState(checkPhoneNumberFormValidity()));
+                // Set initial state based on current data
+                toggleSaveButtonState(checkPhoneNumberFormValidity());
+
             } else if (stepName === 'about-you') {
-                 modalBody.innerHTML = `
+                    modalBody.innerHTML = `
                     <p class="text-gray-600 mb-4">Beantworte nur eine dieser Fragen, um deinem Profil ein Vertrauenssiegel zu verleihen.</p>
                     <div class="form-group">
                         <label for="aboutYouQuestion">Wählen Sie eine Profilfrage</label>
@@ -1268,52 +1524,84 @@
                             <option value="Ich wusste, es war Zeit für ein neues Auto, als...">Ich wusste, es war Zeit für ein neues Auto, als...</option>
                             <option value="Ich schätze Verkäufer, die...">Ich schätze Verkäufer, die...</option>
                         </select>
+                        <div id="aboutYouQuestionError" class="inline-error-message hidden"></div>
                     </div>
                     <div class="form-group" id="aboutYouAnswerGroup" style="display: none;">
                         <label for="aboutYouAnswer">Antwort</label>
                         <textarea id="aboutYouAnswer" class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" rows="3" placeholder="Ihre Antwort hier..."></textarea>
+                        <div id="aboutYouAnswerError" class="inline-error-message hidden"></div>
                     </div>
                 `;
                 saveButton.textContent = 'Speichern';
                 saveButton.style.backgroundColor = '#ef4444';
                 saveButton.style.borderColor = '#ef4444';
 
-                // Add event listeners for "About you" select and textarea
+                // Populate with existing data and show answer group if question is selected
+                document.getElementById('aboutYouQuestion').value = userData.aboutYou.question;
+                document.getElementById('aboutYouAnswer').value = userData.aboutYou.answer;
+
                 const aboutYouQuestionSelect = document.getElementById('aboutYouQuestion');
                 const aboutYouAnswerGroup = document.getElementById('aboutYouAnswerGroup');
                 const aboutYouAnswerTextarea = document.getElementById('aboutYouAnswer');
 
+                if (userData.aboutYou.question) {
+                    aboutYouAnswerGroup.style.display = 'block';
+                }
+
+                const updateAboutYouButtonState = () => toggleSaveButtonState(checkAboutYouFormValidity());
+
                 aboutYouQuestionSelect.addEventListener('change', (event) => {
                     if (event.target.value) {
                         aboutYouAnswerGroup.style.display = 'block';
-                        aboutYouAnswerTextarea.value = ""; // Clear for new input
+                        // Only clear if a new question is selected, otherwise retain previous answer
+                        if (userData.aboutYou.question !== event.target.value) {
+                             aboutYouAnswerTextarea.value = "";
+                        } else {
+                             aboutYouAnswerTextarea.value = userData.aboutYou.answer; // Populate if same question
+                        }
                         aboutYouAnswerTextarea.focus();
                     } else {
                         aboutYouAnswerGroup.style.display = 'none';
                         aboutYouAnswerTextarea.value = "";
                     }
+                    updateAboutYouButtonState(); // Update button state on question change
                 });
+                aboutYouAnswerTextarea.addEventListener('input', updateAboutYouButtonState); // Update button state on answer input
+
+                // Set initial state based on current data
+                updateAboutYouButtonState();
+
 
             } else if (stepName === 'profile-picture') {
                 modalBody.innerHTML = `
                     <p class="text-gray-600 mb-4">Ein Profilbild zeigt, dass Sie echt sind und kein Spam.</p>
                     <div class="upload-area" id="profile-picture-upload-area">
                         <input type="file" id="profilePictureInput" accept="image/*">
-                        <img id="profilePicturePreview" src="" alt="Profilbild Vorschau" class="hidden">
-                        <svg id="uploadIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <img id="profilePicturePreview" src="" alt="Profilbild Vorschau" class="${userData.profilePictureUrl ? '' : 'hidden'}">
+                        <svg id="uploadIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="${userData.profilePictureUrl ? 'hidden' : ''}">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
+                    <div id="profilePictureInputError" class="inline-error-message hidden"></div>
                 `;
                 saveButton.textContent = 'Fertig';
                 saveButton.className = 'modal-button done-purple'; // Apply specific class for styling
                 saveButton.style.backgroundColor = ''; // Reset background
                 saveButton.style.borderColor = ''; // Reset border
 
-                // Add event listener for file input change
+                // Populate with existing data
                 const profilePictureInput = document.getElementById('profilePictureInput');
                 const profilePicturePreview = document.getElementById('profilePicturePreview');
                 const uploadIcon = document.getElementById('uploadIcon');
+
+                if (userData.profilePictureUrl) {
+                    profilePicturePreview.src = userData.profilePictureUrl;
+                    profilePicturePreview.classList.remove('hidden');
+                    uploadIcon.classList.add('hidden');
+                } else {
+                    profilePicturePreview.classList.add('hidden');
+                    uploadIcon.classList.remove('hidden');
+                }
 
                 profilePictureInput.addEventListener('change', (event) => {
                     const file = event.target.files[0];
@@ -1323,14 +1611,19 @@
                             profilePicturePreview.src = e.target.result;
                             profilePicturePreview.classList.remove('hidden');
                             uploadIcon.classList.add('hidden'); // Hide plus icon when image is present
+                            clearInlineError('profilePictureInput'); // Clear error on successful selection
+                            toggleSaveButtonState(checkProfilePictureFormValidity()); // Update button state on image selection
                         };
                         reader.readAsDataURL(file);
                     } else {
                         profilePicturePreview.src = '';
                         profilePicturePreview.classList.add('hidden');
                         uploadIcon.classList.remove('hidden');
+                        toggleSaveButtonState(checkProfilePictureFormValidity()); // Update button state if image is cleared
                     }
                 });
+                // Set initial state based on current data
+                toggleSaveButtonState(checkProfilePictureFormValidity());
 
             }
             else {
@@ -1339,6 +1632,7 @@
                 saveButton.textContent = 'Speichern'; // Translated
                 saveButton.style.backgroundColor = '#4f46e5';
                 saveButton.style.borderColor = '#4f46e5';
+                toggleSaveButtonState(true); // Generic modal, assume always savable or add specific logic later
             }
 
             modalOverlay.classList.add('show');
@@ -1363,105 +1657,125 @@
             clearInlineError('city');
             clearInlineError('country');
             clearInlineError('phoneNumber');
-            clearInlineError('aboutYouQuestion'); // Clear error for aboutYouQuestion
-            clearInlineError('aboutYouAnswer'); // Clear error for aboutYouAnswer
+            clearInlineError('aboutYouQuestion');
+            clearInlineError('aboutYouAnswer');
             clearInlineError('profilePictureInput');
 
 
             if (currentStep === 'name') {
-                const firstName = document.getElementById('firstName').value;
-                const lastName = document.getElementById('lastName').value;
-                let isValid = true;
+                const salutation = document.getElementById('salutation').value;
+                const firstName = document.getElementById('firstName').value.trim();
+                const lastName = document.getElementById('lastName').value.trim();
 
-                if (!firstName) {
-                    showInlineError('firstName', 'Bitte Vornamen eingeben.');
-                    isValid = false;
-                }
-                if (!lastName) {
-                    showInlineError('lastName', 'Bitte Nachnamen eingeben.');
-                    isValid = false;
-                }
+                // Update userData
+                userData.name.salutation = salutation;
+                userData.name.firstName = firstName;
+                userData.name.lastName = lastName;
 
-                if (isValid) {
-                    userName.textContent = `${firstName} ${lastName}`;
-                    profileAvatar.textContent = `${firstName.charAt(0)}${lastName.charAt(0)}`;
-                    previewName.textContent = `${firstName} ${lastName}`; // Update preview
+                // Determine completion status based on *any* name input
+                completedSteps['name'] = (firstName !== '' || lastName !== '');
+
+                // Update UI based on data
+                if (completedSteps['name']) {
+                    userName.textContent = `${firstName} ${lastName}`.trim();
+                    let initials = '';
+                    if (firstName) initials += firstName.charAt(0);
+                    if (lastName) initials += lastName.charAt(0);
+                    profileAvatar.textContent = initials.toUpperCase();
+
+                    previewName.textContent = `${firstName} ${lastName}`.trim();
                     previewName.classList.add('has-content');
                     previewName.classList.remove('skeleton-line');
-                    completedSteps['name'] = true;
-                    toggleStepCompletion('name', true);
-                    updateProgressBar();
-                    closeModal();
+                } else {
+                    // Revert preview to skeleton state if no name is entered
+                    previewName.textContent = '';
+                    previewName.classList.remove('has-content');
+                    previewName.classList.add('skeleton-line');
                 }
+                toggleStepCompletion('name', completedSteps['name']);
+                updateProgressBar();
+                updatePreview(); // Ensure preview is updated correctly
+                closeModal();
+
             } else if (currentStep === 'address') {
-                const street = document.getElementById('street').value;
-                const nr = document.getElementById('nr').value;
-                const zipCode = document.getElementById('zipCode').value;
-                const city = document.getElementById('city').value;
+                const street = document.getElementById('street').value.trim();
+                const nr = document.getElementById('nr').value.trim();
+                const zipCode = document.getElementById('zipCode').value.trim();
+                const city = document.getElementById('city').value.trim();
                 const country = document.getElementById('country').value;
-                let isValid = true;
 
-                if (!street) {
-                    showInlineError('street', 'Bitte Straße eingeben.');
-                    isValid = false;
-                }
-                if (!nr) {
-                    showInlineError('nr', 'Bitte Hausnummer eingeben.');
-                    isValid = false;
-                }
-                if (!zipCode) {
-                    showInlineError('zipCode', 'Bitte Postleitzahl eingeben.');
-                    isValid = false;
-                }
-                if (!city) {
-                    showInlineError('city', 'Bitte Ort eingeben.');
-                    isValid = false;
-                }
-                if (!country) {
-                    showInlineError('country', 'Bitte Land auswählen.');
-                    isValid = false;
-                }
+                // Update userData
+                userData.address.street = street;
+                userData.address.nr = nr;
+                userData.address.zipCode = zipCode;
+                userData.address.city = city;
+                userData.address.country = country;
 
-                if (isValid) {
-                    previewLocation.classList.remove('hidden'); // Show location in preview
-                    previewZipCity.textContent = `${zipCode} ${city}`; // Update zip and city in preview
+                // Determine completion status based on *any* address input
+                completedSteps['address'] = (street !== '' || nr !== '' || zipCode !== '' || city !== '' || country !== '');
+
+                // Update UI based on data
+                if (completedSteps['address']) {
+                    previewLocation.classList.remove('hidden');
+                    previewZipCity.textContent = `${zipCode} ${city}`.trim();
                     previewZipCity.classList.add('has-content');
                     previewZipCity.classList.remove('skeleton-line');
-                    completedSteps['address'] = true;
-                    toggleStepCompletion('address', true);
-                    updateProgressBar();
-                    closeModal();
-                }
-            } else if (currentStep === 'phone-number') {
-                const phoneNumber = document.getElementById('phoneNumber').value;
-                const digitsOnly = phoneNumber.replace(/\D/g, ''); // Remove non-digits
-                if (phoneNumber && digitsOnly.length >= 8) { // Changed from 5 to 8
-                    previewPhoneVerified.classList.remove('hidden'); // Show phone verified in preview
-                    previewPhoneText.textContent = 'Telefonnummer nicht verifiziert'; // Set text content
-                    previewPhoneText.classList.add('has-content'); // Mark text as having content
-                    previewPhoneText.classList.remove('skeleton-line');
-                    completedSteps['phone-number'] = true;
-                    toggleStepCompletion('phone-number', true);
-                    updateProgressBar();
-                    closeModal();
                 } else {
-                    showInlineError('phoneNumber', 'Bitte geben Sie eine gültige Telefonnummer ein (mindestens 8 Ziffern).'); // Updated message
+                    previewLocation.classList.add('hidden');
+                    previewZipCity.textContent = '';
+                    previewZipCity.classList.remove('has-content');
+                    previewZipCity.classList.add('skeleton-line');
                 }
+                toggleStepCompletion('address', completedSteps['address']);
+                updateProgressBar();
+                updatePreview(); // Ensure preview is updated correctly
+                closeModal();
+
+            } else if (currentStep === 'phone-number') {
+                const phoneNumber = document.getElementById('phoneNumber').value.trim();
+                const digitsOnly = phoneNumber.replace(/\D/g, '');
+
+                // Update userData
+                userData.phoneNumber = phoneNumber;
+
+                // Validate only if there's an input
+                let isValidPhoneNumber = true;
+                if (phoneNumber.length > 0 && digitsOnly.length < 8) {
+                    showInlineError('phoneNumber', 'Bitte geben Sie eine gültige Telefonnummer ein (mindestens 8 Ziffern).');
+                    isValidPhoneNumber = false;
+                }
+
+                if (isValidPhoneNumber) {
+                    completedSteps['phone-number'] = (phoneNumber.length > 0); // Completed if *any* valid number is entered
+
+                    if (completedSteps['phone-number']) {
+                        previewPhoneVerified.classList.remove('hidden');
+                        previewPhoneText.textContent = 'Telefonnummer nicht verifiziert'; // Display as "not verified"
+                        previewPhoneText.classList.add('has-content');
+                        previewPhoneText.classList.remove('skeleton-line');
+                    } else {
+                        previewPhoneVerified.classList.add('hidden');
+                        previewPhoneText.textContent = '';
+                        previewPhoneText.classList.remove('has-content');
+                        previewPhoneText.classList.add('skeleton-line');
+                    }
+                    toggleStepCompletion('phone-number', completedSteps['phone-number']);
+                    updateProgressBar();
+                    updatePreview(); // Ensure preview is updated correctly
+                    closeModal();
+                }
+
             } else if (currentStep === 'about-you') {
                 const aboutYouQuestion = document.getElementById('aboutYouQuestion').value;
-                const aboutYouAnswer = document.getElementById('aboutYouAnswer').value;
-                let isValid = true;
+                const aboutYouAnswer = document.getElementById('aboutYouAnswer').value.trim();
 
-                if (!aboutYouQuestion) {
-                    showInlineError('aboutYouQuestion', 'Bitte wählen Sie eine Profilfrage aus.');
-                    isValid = false;
-                }
-                if (!aboutYouAnswer.trim()) {
-                    showInlineError('aboutYouAnswer', 'Bitte geben Sie Ihre Antwort ein.');
-                    isValid = false;
-                }
+                // Update userData
+                userData.aboutYou.question = aboutYouQuestion;
+                userData.aboutYou.answer = aboutYouAnswer;
 
-                if (isValid) {
+                completedSteps['about-you'] = (aboutYouQuestion !== '' && aboutYouAnswer !== '');
+
+                if (completedSteps['about-you']) {
                     previewAboutYou.classList.remove('hidden');
                     previewAboutYouPrompt.textContent = aboutYouQuestion;
                     previewAboutYouAnswer.textContent = aboutYouAnswer;
@@ -1469,70 +1783,57 @@
                     previewAboutYouAnswer.classList.add('has-content');
                     previewAboutYouPrompt.classList.remove('skeleton-line');
                     previewAboutYouAnswer.classList.remove('skeleton-line');
-
-
-                    completedSteps['about-you'] = true;
-                    toggleStepCompletion('about-you', true);
-                    updateProgressBar();
-                    closeModal();
+                } else {
+                    previewAboutYou.classList.add('hidden');
+                    previewAboutYouPrompt.textContent = '';
+                    previewAboutYouAnswer.textContent = '';
+                    previewAboutYouPrompt.classList.remove('has-content');
+                    previewAboutYouAnswer.classList.remove('has-content');
+                    previewAboutYouPrompt.classList.add('skeleton-line');
+                    previewAboutYouAnswer.classList.add('skeleton-line');
                 }
+                toggleStepCompletion('about-you', completedSteps['about-you']);
+                updateProgressBar();
+                updatePreview(); // Ensure preview is updated correctly
+                closeModal();
+
             } else if (currentStep === 'profile-picture') {
                 const profilePicturePreview = document.getElementById('profilePicturePreview');
-                if (profilePicturePreview && profilePicturePreview.src && !profilePicturePreview.classList.contains('hidden')) {
-                    profileAvatar.textContent = '';
-                    profileAvatar.style.backgroundColor = 'transparent';
 
-                    const imgElement = document.createElement('img');
-                    imgElement.src = profilePicturePreview.src;
-                    imgElement.alt = "Profilbild";
-                    imgElement.style.width = '100%';
-                    imgElement.style.height = '100%';
-                    imgElement.style.objectFit = 'cover';
-                    imgElement.style.borderRadius = '50%';
-
-                    profileAvatar.innerHTML = '';
-                    profileAvatar.appendChild(imgElement);
-
-                    // Update preview avatar as well
-                    previewAvatar.textContent = '';
-                    previewAvatar.style.backgroundColor = 'transparent';
-                    previewAvatar.classList.add('has-image'); // Add class for image state
-                    // Remove skeleton from preview avatar
-                    if (document.getElementById('preview-avatar-skeleton')) { // Check if it exists before removing
-                        document.getElementById('preview-avatar-skeleton').remove();
-                    }
-
-                    const previewImgElement = document.createElement('img');
-                    previewImgElement.src = profilePicturePreview.src;
-                    previewImgElement.alt = "Profilbild";
-                    previewImgElement.style.width = '100%';
-                    previewImgElement.style.height = '100%';
-                    previewImgElement.style.objectFit = 'cover';
-                    previewImgElement.style.borderRadius = '50%';
-                    previewAvatar.innerHTML = ''; // Clear content before appending
-                    previewAvatar.appendChild(previewImgElement);
-
-
+                if (profilePicturePreview.src && !profilePicturePreview.classList.contains('hidden')) {
+                    userData.profilePictureUrl = profilePicturePreview.src;
                     completedSteps['profile-picture'] = true;
-                    toggleStepCompletion('profile-picture', true);
-                    updateProgressBar();
-                    closeModal();
+
+                    // Update main profile avatar
+                    profileAvatar.textContent = ''; // Clear initials
+                    profileAvatar.style.backgroundColor = 'transparent';
+                    profileAvatar.classList.add('has-image'); // Add class for image state
+                    profileAvatar.innerHTML = `<img src="${userData.profilePictureUrl}" alt="Profilbild">`;
+                    
                 } else {
-                    showInlineError('profilePictureInput', 'Bitte laden Sie ein Profilbild hoch.');
+                    userData.profilePictureUrl = '';
+                    completedSteps['profile-picture'] = false;
+
+                    // Revert main avatar to initials (if name is available) or 'DN'
+                    if (userData.name.firstName || userData.name.lastName) {
+                        let initials = '';
+                        if (userData.name.firstName) initials += userData.name.firstName.charAt(0);
+                        if (userData.name.lastName) initials += userData.name.lastName.charAt(0);
+                        profileAvatar.textContent = initials.toUpperCase();
+                    } else {
+                        profileAvatar.textContent = 'DN';
+                    }
+                    profileAvatar.style.backgroundColor = '#4f46e5';
+                    profileAvatar.classList.remove('has-image');
+                    profileAvatar.querySelector('img')?.remove(); // Remove any existing image element
                 }
-            }
-            // For any other step not explicitly handled, assume it's a generic completion
-            else if (currentStep) {
-                completedSteps[currentStep] = true; // Mark step as completed
-                toggleStepCompletion(currentStep, true); // Update step visual
-                updateProgressBar(); // Update progress bar
+
+                toggleStepCompletion('profile-picture', completedSteps['profile-picture']);
+                updateProgressBar();
+                updatePreview(); // Ensure preview is updated correctly
                 closeModal();
             }
         }
-
-        // Event Listeners for Add Buttons
-        // Moved inside DOMContentLoaded
-        // modalCloseButton.addEventListener('click', closeModal); // Moved inside DOMContentLoaded
 
         // Initial setup of preview skeletons
         function setupPreviewSkeletons() {
@@ -1541,7 +1842,7 @@
             userName = document.getElementById('user-name');
             progressBar = document.getElementById('profile-progress-bar');
             completionPercentage = document.getElementById('completion-percentage');
-            addButtons = document.querySelectorAll('.add-button'); // This was the problematic line outside DOMContentLoaded
+            addButtons = document.querySelectorAll('.add-button');
             modalOverlay = document.getElementById('form-modal-overlay');
             modalTitle = document.getElementById('modal-title');
             modalBody = modalOverlay.querySelector('.modal-body');
@@ -1554,7 +1855,7 @@
             // Re-fetch previewAvatarSkeleton, it might be removed by previous `innerHTML`
             let currentPreviewAvatarSkeleton = document.getElementById('preview-avatar-skeleton');
             if (currentPreviewAvatarSkeleton) {
-                 // Remove existing skeleton if it's there
+                // Remove existing skeleton if it's there
                 currentPreviewAvatarSkeleton.remove();
             }
 
@@ -1568,18 +1869,19 @@
             previewAboutYou = document.getElementById('preview-about-you');
             previewAboutYouPrompt = document.getElementById('preview-about-you-prompt');
             previewAboutYouAnswer = document.getElementById('preview-about-you-answer');
-            confettiContainer = document.getElementById('confetti-container'); // Ensure this is fetched
+            confettiContainer = document.getElementById('confetti-container');
 
 
             // Apply skeleton styles
             if (previewAvatar) {
-                // Ensure there's a skeleton circle if no image is present
-                if (!previewAvatar.querySelector('img')) {
+                // Ensure there's a skeleton circle if no image is present AND no user data image
+                if (!previewAvatar.querySelector('img') && !userData.profilePictureUrl) {
                     const skeletonDiv = document.createElement('div');
                     skeletonDiv.id = 'preview-avatar-skeleton';
                     skeletonDiv.classList.add('skeleton-circle');
                     previewAvatar.innerHTML = ''; // Clear any default text
                     previewAvatar.appendChild(skeletonDiv);
+                    previewAvatar.style.backgroundColor = '#d1d5db'; // Ensure skeleton background color
                 }
                 previewAvatar.classList.remove('has-image');
             }
@@ -1605,7 +1907,13 @@
                 if (!phoneTextElement) {
                     phoneTextElement = document.createElement('span');
                     phoneTextElement.id = 'preview-phone-text';
-                    previewPhoneVerified.appendChild(phoneTextElement);
+                    // Insert before the SVG (assuming SVG is the second child)
+                    const svgElement = previewPhoneVerified.querySelector('svg');
+                    if (svgElement) {
+                        previewPhoneVerified.insertBefore(phoneTextElement, svgElement);
+                    } else {
+                        previewPhoneVerified.appendChild(phoneTextElement);
+                    }
                 }
                 phoneTextElement.classList.add('skeleton-line');
                 phoneTextElement.textContent = ''; // Clear text content
@@ -1617,10 +1925,16 @@
             if (previewLocation) {
                 previewLocation.classList.add('hidden');
                 let zipCityElement = document.getElementById('preview-zip-city');
-                 if (!zipCityElement) {
+                if (!zipCityElement) {
                     zipCityElement = document.createElement('span');
                     zipCityElement.id = 'preview-zip-city';
-                    previewLocation.appendChild(zipCityElement);
+                    // Insert before the SVG (assuming SVG is the second child)
+                    const svgElement = previewLocation.querySelector('svg');
+                    if (svgElement) {
+                        previewLocation.insertBefore(zipCityElement, svgElement);
+                    } else {
+                        previewLocation.appendChild(zipCityElement);
+                    }
                 }
                 zipCityElement.classList.add('skeleton-line');
                 zipCityElement.textContent = ''; // Clear text content
@@ -1662,7 +1976,7 @@
             userName = document.getElementById('user-name');
             progressBar = document.getElementById('profile-progress-bar');
             completionPercentage = document.getElementById('completion-percentage');
-            addButtons = document.querySelectorAll('.add-button'); // This was the problematic line outside DOMContentLoaded
+            addButtons = document.querySelectorAll('.add-button');
             modalOverlay = document.getElementById('form-modal-overlay');
             modalTitle = document.getElementById('modal-title');
             modalBody = modalOverlay.querySelector('.modal-body');
@@ -1681,25 +1995,114 @@
             previewAboutYou = document.getElementById('preview-about-you');
             previewAboutYouPrompt = document.getElementById('preview-about-you-prompt');
             previewAboutYouAnswer = document.getElementById('preview-about-you-answer');
-            confettiContainer = document.getElementById('confetti-container'); // Ensure this is fetched
+            confettiContainer = document.getElementById('confetti-container');
 
-            setupPreviewSkeletons();
-            updateProgressBar(); // Call to update progress bar and percentage
+            setupPreviewSkeletons(); // Initialize skeleton elements in preview
+            updateProgressBar(); // Initial update of progress bar and summary
+            updatePreview(); // Initial update of preview based on current (empty) userData
 
             // Event Listeners for Add Buttons
             addButtons.forEach(button => {
                 button.addEventListener('click', (event) => {
                     const stepId = event.target.dataset.step;
-                    // Only open modal if the step is not completed
-                    if (completedSteps[stepId] === false) {
-                        openModal(stepId);
-                    }
+                    openModal(stepId);
                 });
             });
 
-            // Event Listener for Modal Close Button (X icon)
+            // Initialize button appearance and update descriptive text based on current completion status
+            Object.keys(completedSteps).forEach(stepId => {
+                toggleStepCompletion(stepId, completedSteps[stepId]);
+            });
+
             modalCloseButton.addEventListener('click', closeModal);
         });
+
+        // Function to update the preview section based on userData
+        function updatePreview() {
+            // Name Preview
+            if (userData.name.firstName || userData.name.lastName) {
+                previewName.textContent = `${userData.name.firstName} ${userData.name.lastName}`.trim();
+                previewName.classList.add('has-content');
+                previewName.classList.remove('skeleton-line');
+            } else {
+                previewName.textContent = '';
+                previewName.classList.remove('has-content');
+                previewName.classList.add('skeleton-line');
+            }
+
+            // Location Preview
+            if (userData.address.zipCode || userData.address.city) {
+                previewLocation.classList.remove('hidden');
+                previewZipCity.textContent = `${userData.address.zipCode} ${userData.address.city}`.trim();
+                previewZipCity.classList.add('has-content');
+                previewZipCity.classList.remove('skeleton-line');
+            } else {
+                previewLocation.classList.add('hidden');
+                previewZipCity.textContent = '';
+                previewZipCity.classList.remove('has-content');
+                previewZipCity.classList.add('skeleton-line');
+            }
+
+            // Phone Number Preview
+            if (userData.phoneNumber) {
+                previewPhoneVerified.classList.remove('hidden');
+                // Use a different icon for "not verified" if it's just entered, without actual verification logic
+                const phoneIcon = previewPhoneVerified.querySelector('svg');
+                if (phoneIcon) {
+                    // Current icon is an X in a circle, which implies "not verified".
+                }
+                previewPhoneText.textContent = 'Telefonnummer nicht verifiziert'; // Display "not verified" if number is present
+                previewPhoneText.classList.add('has-content');
+                previewPhoneText.classList.remove('skeleton-line');
+            } else {
+                previewPhoneVerified.classList.add('hidden');
+                previewPhoneText.textContent = '';
+                previewPhoneText.classList.remove('has-content');
+                previewPhoneText.classList.add('skeleton-line');
+            }
+
+            // About You Preview
+            if (userData.aboutYou.question && userData.aboutYou.answer) {
+                previewAboutYou.classList.remove('hidden');
+                previewAboutYouPrompt.textContent = userData.aboutYou.question;
+                previewAboutYouAnswer.textContent = userData.aboutYou.answer;
+                previewAboutYouPrompt.classList.add('has-content');
+                previewAboutYouAnswer.classList.add('has-content');
+                previewAboutYouPrompt.classList.remove('skeleton-line');
+                previewAboutYouAnswer.classList.remove('skeleton-line');
+            } else {
+                previewAboutYou.classList.add('hidden');
+                previewAboutYouPrompt.textContent = '';
+                previewAboutYouAnswer.textContent = '';
+                previewAboutYouPrompt.classList.remove('has-content');
+                previewAboutYouAnswer.classList.remove('has-content');
+                previewAboutYouPrompt.classList.add('skeleton-line');
+                previewAboutYouAnswer.classList.add('skeleton-line');
+            }
+
+            // Profile Picture Preview
+            if (userData.profilePictureUrl) {
+                previewAvatar.innerHTML = `<img src="${userData.profilePictureUrl}" alt="Profilbild">`;
+                previewAvatar.classList.add('has-image');
+                previewAvatar.style.backgroundColor = 'transparent';
+                // Remove skeleton if image is present
+                if (document.getElementById('preview-avatar-skeleton')) {
+                    document.getElementById('preview-avatar-skeleton').remove();
+                }
+            } else {
+                // Ensure the skeleton is present if no image is uploaded
+                if (!document.getElementById('preview-avatar-skeleton')) {
+                    const skeletonDiv = document.createElement('div');
+                    skeletonDiv.id = 'preview-avatar-skeleton';
+                    skeletonDiv.classList.add('skeleton-circle');
+                    previewAvatar.innerHTML = '';
+                    previewAvatar.appendChild(skeletonDiv);
+                }
+                previewAvatar.classList.remove('has-image');
+                previewAvatar.style.backgroundColor = '#d1d5db';
+            }
+        }
+
     </script>
 </body>
 </html>
